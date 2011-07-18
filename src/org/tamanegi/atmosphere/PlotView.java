@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 
 public class PlotView extends View
@@ -200,23 +199,6 @@ public class PlotView extends View
         }
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent ev)
-    {
-        if(selection_start < 0 || selection_end < 0) {
-            return false;
-        }
-
-        long center =
-            (long)((ev.getX() / getWidth()) * (range_end - range_start)) +
-            range_start;
-        long start = center - (selection_end - selection_start) / 2;
-        long end = start + (selection_end - selection_start);
-        setSelectionRange(start, end);
-
-        return true;
-    }
-
     public void setData(LogData.LogRecord[] records, int cnt)
     {
         this.records = records;
@@ -255,6 +237,16 @@ public class PlotView extends View
         invalidate();
     }
 
+    public long getTimeRangeStart()
+    {
+        return range_start;
+    }
+
+    public long getTimeRangeEnd()
+    {
+        return range_end;
+    }
+
     public void setSelectionRange(long start, long end)
     {
         if(selection_start == start && selection_end == end) {
@@ -267,6 +259,16 @@ public class PlotView extends View
         adjustSelectionRange();
         selectionChanged();
         invalidate();
+    }
+
+    public long getSelectionRangeStart()
+    {
+        return selection_start;
+    }
+
+    public long getSelectionRangeEnd()
+    {
+        return selection_end;
     }
 
     private boolean adjustSelectionRange()

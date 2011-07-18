@@ -14,8 +14,8 @@ import android.os.Handler;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.animation.AnimationUtils;
-import android.widget.Scroller;
 
 public class AtmosphereActivity extends Activity
 {
@@ -43,14 +43,24 @@ public class AtmosphereActivity extends Activity
     private HorizontalTicsView htics_main_day;
     private HorizontalTicsView htics_sub;
 
+    private SelectionHolder selection_holder;
+
     private Handler handler;
-    private Runnable updater = new Runnable() {
+    private Runnable logdata_updater = new Runnable() {
             @Override public void run() {
                 updateLogData();
             }
         };
+    private Runnable vtics_updater = new Runnable() {
+            @Override public void run() {
+                updateValueTics(plotter_main,
+                                plotter_sub.getSelectionRangeStart(),
+                                plotter_sub.getSelectionRangeEnd(),
+                                PLOT_VALUE_MAIN_TICS_STEP);
+            }
+        };
+
     private GestureDetector gesture_detector;
-    private Scroller scroller;
 
     private Map<Object, List<Animator>> animator_map;
 
@@ -64,20 +74,17 @@ public class AtmosphereActivity extends Activity
         records = new LogData.LogRecord[LogData.TOTAL_COUNT];
         record_cnt = 0;
 
+        selection_holder = new SelectionHolder();
+
         handler = new Handler();
         gesture_detector = new GestureDetector(this, new GestureListener());
-        scroller = new Scroller(this);
         animator_map = new HashMap<Object, List<Animator>>();
 
         plotter_main = (PlotView)findViewById(R.id.plotter_main);
-        plotter_main.setOnTouchListener(new View.OnTouchListener() {
-                public boolean onTouch(View v, MotionEvent ev) {
-                    return gesture_detector.onTouchEvent(ev);
-                }
-            });
-        // todo: use Scroller
+        plotter_main.setOnTouchListener(new OnTouchMainPlotterListener());
 
         plotter_sub = (PlotView)findViewById(R.id.plotter_sub);
+        plotter_sub.setOnTouchListener(new OnTouchSubPlotterListener());
         plotter_sub.setOnSelectionChangeListener(new SelectionListener());
 
         vtics_main = (VerticalTicsView)findViewById(R.id.tic_left);
@@ -118,7 +125,8 @@ public class AtmosphereActivity extends Activity
     {
         super.onPause();
 
-        handler.removeCallbacks(updater);
+        handler.removeCallbacks(logdata_updater);
+        handler.removeCallbacks(vtics_updater);
     }
 
     private void updateLogData()
@@ -138,7 +146,7 @@ public class AtmosphereActivity extends Activity
 
         updateSelectionRange();
 
-        handler.postDelayed(updater, LoggerService.LOG_INTERVAL);
+        handler.postDelayed(logdata_updater, LoggerService.LOG_INTERVAL);
     }
 
     private void updateSelectionRange()
@@ -181,27 +189,41 @@ public class AtmosphereActivity extends Activity
 
         if(low != cur_low || high != cur_high) {
             cancelAllAnimator(plotter);
+            cancelAllAnimator(vtics_main);
 
             if(cur_low == cur_high) {
                 plotter.setValueRange(low, high);
                 vtics_main.setValueRange(low, high);
             }
             else {
-                startAnimation(plotter, "valueRangeMin", cur_low, low);
-                startAnimation(plotter, "valueRangeMax", cur_high, high);
-                startAnimation(vtics_main, "valueRangeMin", cur_low, low);
-                startAnimation(vtics_main, "valueRangeMax", cur_high, high);
+                startValueAnimation(plotter, "valueRangeMin", cur_low, low);
+                startValueAnimation(plotter, "valueRangeMax", cur_high, high);
+                startValueAnimation(vtics_main, "valueRangeMin",
+                                    cur_low, low);
+                startValueAnimation(vtics_main, "valueRangeMax",
+                                    cur_high, high);
             }
         }
     }
 
-    private void startAnimation(Object target, String prop,
-                                float from, float to)
+    private void startValueAnimation(Object target, String prop,
+                                     float from, float to)
     {
         ObjectAnimator anim = ObjectAnimator.ofFloat(target, prop, from, to);
         anim.setDuration(ANIMATION_DURATION);
         anim.setInterpolator(AnimationUtils.loadInterpolator(
                                  this, R.anim.plotter_value_interpolator));
+        anim.start();
+        addAnimator(target, anim);
+    }
+
+    private void startSelectionAnimation(Object target, String prop,
+                                         int from, int to)
+    {
+        ObjectAnimator anim = ObjectAnimator.ofInt(target, prop, from, to);
+        anim.setDuration(ANIMATION_DURATION);
+        anim.setInterpolator(AnimationUtils.loadInterpolator(
+                                 this, R.anim.plotter_selection_interpolator));
         anim.start();
         addAnimator(target, anim);
     }
@@ -240,12 +262,21 @@ public class AtmosphereActivity extends Activity
             plotter_main.setTimeRange(start, end);
             htics_main_qday.setTimeRange(start, end);
             htics_main_day.setTimeRange(start, end);
-            updateValueTics(plotter_main, start, end,
-                            PLOT_VALUE_MAIN_TICS_STEP);
+
+            handler.removeCallbacks(vtics_updater);
+            handler.post(vtics_updater);
 
             long cur_time = System.currentTimeMillis();
             plot_end = (cur_time - end <= LoggerService.LOG_INTERVAL * 2 ?
                         -1 : end);
+        }
+    }
+
+    private class OnTouchMainPlotterListener implements View.OnTouchListener
+    {
+        public boolean onTouch(View v, MotionEvent ev)
+        {
+            return gesture_detector.onTouchEvent(ev);
         }
     }
 
@@ -280,6 +311,65 @@ public class AtmosphereActivity extends Activity
         {
             // todo:
             return true;
+        }
+    }
+
+    private class OnTouchSubPlotterListener implements View.OnTouchListener
+    {
+        private int touch_slop;
+        private float last_x;
+
+        private OnTouchSubPlotterListener()
+        {
+            ViewConfiguration conf =
+                ViewConfiguration.get(AtmosphereActivity.this);
+            touch_slop = conf.getScaledTouchSlop();
+        }
+
+        public boolean onTouch(View v, MotionEvent ev)
+        {
+            long range_start = plotter_sub.getTimeRangeStart();
+            long range_end = plotter_sub.getTimeRangeEnd();
+            long center =
+                (long)((ev.getX() / plotter_sub.getWidth()) *
+                       (range_end - range_start)) +
+                range_start;
+            long end = center + PLOT_MAIN_RANGE / 2;
+
+            cancelAllAnimator(selection_holder);
+            if(ev.getAction() == MotionEvent.ACTION_MOVE &&
+               Math.abs(ev.getX() - last_x) > touch_slop) {
+                plotter_sub.setSelectionRange(end - PLOT_MAIN_RANGE, end);
+                last_x = ev.getX();
+            }
+            else {
+                selection_holder.end_from = plotter_sub.getSelectionRangeEnd();
+                selection_holder.end_to = end;
+                startSelectionAnimation(selection_holder, "selectionRangeEnd",
+                                        0, SelectionHolder.DIVISION);
+                if(ev.getAction() != MotionEvent.ACTION_MOVE) {
+                    last_x = ev.getX();
+                }
+            }
+
+            return true;
+        }
+    }
+
+    private class SelectionHolder
+    {
+        private static final int DIVISION = 1000;
+
+        private long end_from;
+        private long end_to;
+
+        // invoked from animator
+        @SuppressWarnings("unused")
+        public void setSelectionRangeEnd(int fac)
+        {
+            long end = (end_from * (DIVISION - fac) + end_to * fac) / DIVISION;
+            long start = end - PLOT_MAIN_RANGE;
+            plotter_sub.setSelectionRange(start, end);
         }
     }
 }
