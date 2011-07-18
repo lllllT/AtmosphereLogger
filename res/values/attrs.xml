@@ -21,4 +21,28 @@
     <attr name="mainValueTicsStep" format="integer" />
     <attr name="subValueTicsStep" format="integer" />
   </declare-styleable>
+
+  <attr name="textSize" format="dimension" />
+  <attr name="textColor" format="color" />
+  <attr name="ticsStep" format="integer">
+    <enum name="hour" value="0" />
+    <enum name="day" value="1" />
+    <enum name="week" value="2" />
+    <enum name="month" value="3" />
+    <enum name="qday" value="4" />
+    <enum name="five_days" value="5" />
+  </attr>
+
+  <declare-styleable name="HorizontalTicsView">
+    <attr name="textSize" />
+    <attr name="textColor" />
+    <attr name="ticsStep" />
+  </declare-styleable>
+
+  <declare-styleable name="VerticalTicsView">
+    <attr name="textSize" />
+    <attr name="textColor" />
+    <attr name="ticsStep" />
+    <attr name="maxDigits" format="integer" />
+  </declare-styleable>
 </resources>

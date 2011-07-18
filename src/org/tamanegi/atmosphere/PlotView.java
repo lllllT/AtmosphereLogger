@@ -1,7 +1,6 @@
 package org.tamanegi.atmosphere;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -19,15 +18,6 @@ public class PlotView extends View
         public void onSelectionChanged(long start, long end);
     }
 
-    private enum TicsStep
-    {
-        HOUR, DAY, WEEK, MONTH
-    }
-
-    private static final TicsStep[] TICS_STEPS = {
-        TicsStep.HOUR, TicsStep.DAY, TicsStep.WEEK, TicsStep.MONTH
-    };
-
     private LogData.LogRecord[] records = null;
     private int record_cnt = 0;
 
@@ -40,20 +30,20 @@ public class PlotView extends View
     private long selection_start = -1;
     private long selection_end = -1;
 
-    private float value_min = 0;
-    private float value_max = 0;
+    private float value_min = 980;
+    private float value_max = 1020;
 
     private int primary_color = 0xff808080;
     private int secondary_color = 0xff808080;
     private int border_color = 0xff606060;
 
-    private TicsStep main_tics = TicsStep.HOUR;
+    private TicsUtils.TicsStep main_tics = TicsUtils.TicsStep.HOUR;
     private int main_tics_color = 0xff202020;
 
     private int value_main_step = 100;
     private int value_sub_step = 10;
 
-    private TicsStep sub_tics = TicsStep.HOUR;
+    private TicsUtils.TicsStep sub_tics = TicsUtils.TicsStep.HOUR;
     private int sub_tics_color = 0xff404040;
 
     public PlotView(Context context)
@@ -76,25 +66,25 @@ public class PlotView extends View
             attrs, R.styleable.PlotView, defstyle, 0);
 
         primary_color =
-            vals.getColor(R.styleable.PlotView_primaryColor, 0xff808080);
+            vals.getColor(R.styleable.PlotView_primaryColor, primary_color);
         secondary_color =
-            vals.getColor(R.styleable.PlotView_secondaryColor, 0xff808080);
+            vals.getColor(R.styleable.PlotView_secondaryColor, secondary_color);
         border_color =
-            vals.getColor(R.styleable.PlotView_borderColor, 0xff606060);
+            vals.getColor(R.styleable.PlotView_borderColor, border_color);
         main_tics_color =
-            vals.getColor(R.styleable.PlotView_mainTicsColor, 0xff202020);
+            vals.getColor(R.styleable.PlotView_mainTicsColor, main_tics_color);
         sub_tics_color =
-            vals.getColor(R.styleable.PlotView_subTicsColor, 0xff404040);
+            vals.getColor(R.styleable.PlotView_subTicsColor, sub_tics_color);
 
-        main_tics = TICS_STEPS[
-            vals.getInt(R.styleable.PlotView_mainTicsStep, 0)];
-        sub_tics = TICS_STEPS[
-            vals.getInt(R.styleable.PlotView_subTicsStep, 0)];
+        main_tics = TicsUtils.getTicsStep(
+            vals.getInt(R.styleable.PlotView_mainTicsStep, 0));
+        sub_tics = TicsUtils.getTicsStep(
+            vals.getInt(R.styleable.PlotView_subTicsStep, 0));
 
-        value_main_step =
-            vals.getInteger(R.styleable.PlotView_mainValueTicsStep, 100);
-        value_sub_step =
-            vals.getInteger(R.styleable.PlotView_subValueTicsStep, 10);
+        value_main_step = vals.getInteger(
+            R.styleable.PlotView_mainValueTicsStep, value_main_step);
+        value_sub_step = vals.getInteger(
+            R.styleable.PlotView_subValueTicsStep, value_sub_step);
 
         vals.recycle();
     }
@@ -120,25 +110,25 @@ public class PlotView extends View
         paint.setStrokeWidth(1);
         {
             paint.setColor(sub_tics_color);
-            Calendar sub_time = roundTimeByTicsStep(range_start, sub_tics);
-            int sub_stepf = calenderStepField(sub_tics);
+            Calendar sub_time =
+                TicsUtils.roundTimeByTicsStep(range_start, sub_tics);
             while(sub_time.getTimeInMillis() < range_end) {
                 long t = sub_time.getTimeInMillis();
                 int x = (int)(((t - range_start) / range) * w);
                 canvas.drawLine(x, 0, x, h, paint);
 
-                sub_time.add(sub_stepf, 1);
+                TicsUtils.incrementCalendar(sub_time, sub_tics);
             }
 
             paint.setColor(main_tics_color);
-            Calendar main_time = roundTimeByTicsStep(range_start, main_tics);
-            int main_stepf = calenderStepField(main_tics);
+            Calendar main_time =
+                TicsUtils.roundTimeByTicsStep(range_start, main_tics);
             while(main_time.getTimeInMillis() < range_end) {
                 long t = main_time.getTimeInMillis();
                 int x = (int)(((t - range_start) / range) * w);
                 canvas.drawLine(x, 0, x, h, paint);
 
-                main_time.add(main_stepf, 1);
+                TicsUtils.incrementCalendar(main_time, main_tics);
             }
         }
 
@@ -208,41 +198,6 @@ public class PlotView extends View
             selection_drawable.setBounds(xs, 0, xe, h);
             selection_drawable.draw(canvas);
         }
-    }
-
-    private Calendar roundTimeByTicsStep(long time, TicsStep step)
-    {
-        Calendar cal = new GregorianCalendar();
-        cal.setTimeInMillis(range_start);
-
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        if(step == TicsStep.WEEK) {
-            int week = cal.get(Calendar.WEEK_OF_MONTH);
-            cal.clear();
-            cal.set(Calendar.YEAR, year);
-            cal.set(Calendar.MONTH, month);
-            cal.set(Calendar.WEEK_OF_MONTH, week);
-            cal.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-        }
-        else {
-            int day = (step == TicsStep.MONTH ?
-                       1 : cal.get(Calendar.DAY_OF_MONTH));
-            int hour = (step == TicsStep.HOUR ?
-                        cal.get(Calendar.HOUR) : 0);
-            cal.clear();
-            cal.set(year, month, day, hour, 0);
-        }
-
-        return cal;
-    }
-
-    private int calenderStepField(TicsStep step)
-    {
-        return (step == TicsStep.HOUR ? Calendar.HOUR :
-                step == TicsStep.DAY ? Calendar.DAY_OF_MONTH :
-                step == TicsStep.WEEK ? Calendar.WEEK_OF_MONTH :
-                Calendar.MONTH);
     }
 
     @Override
