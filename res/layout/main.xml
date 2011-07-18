@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+   xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:app="http://schemas.android.com/apk/res/org.tamanegi.atmosphere"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   android:layout_margin="6dp">
+
+  <View
+     android:id="@+id/tic_left"
+     android:background="#ff0000"
+     android:layout_width="100dp"
+     android:layout_height="match_parent"
+     android:layout_alignParentTop="true"
+     android:layout_alignParentLeft="true"
+     android:layout_alignBottom="@+id/plotter_main"
+     />
+  <org.tamanegi.atmosphere.PlotView
+     android:id="@+id/plotter_main"
+     android:layout_width="match_parent"
+     android:layout_height="match_parent"
+     android:layout_alignParentTop="true"
+     android:layout_toRightOf="@+id/tic_left"
+     android:layout_toLeftOf="@+id/tic_right"
+     android:layout_above="@+id/tic_bottom"
+     app:mainTicsStep="day"
+     app:subTicsStep="hour"
+     app:mainValueTicsStep="10"
+     app:subValueTicsStep="5"
+     />
+  <!--
+  <View
+     android:id="@+id/tic_right"
+     android:background="#0000ff"
+     android:layout_width="100dp"
+     android:layout_height="match_parent"
+     android:layout_alignParentTop="true"
+     android:layout_alignParentRight="true"
+     android:layout_alignBottom="@+id/plotter_main"
+     />
+  -->
+
+  <View
+     android:id="@+id/tic_bottom"
+     android:background="#ff8080"
+     android:layout_width="match_parent"
+     android:layout_height="100dp"
+     android:layout_alignLeft="@+id/plotter_main"
+     android:layout_alignRight="@+id/plotter_main"
+     android:layout_above="@+id/plotter_sub"
+     android:layout_marginBottom="6dp"
+     />
+
+  <org.tamanegi.atmosphere.PlotView
+     android:id="@+id/plotter_sub"
+     android:layout_width="match_parent"
+     android:layout_height="100dp"
+     android:layout_alignParentLeft="true"
+     android:layout_alignParentRight="true"
+     android:layout_above="@+id/tic_sub_bottom"
+     app:mainTicsStep="month"
+     app:subTicsStep="day"
+     app:mainValueTicsStep="100"
+     app:subValueTicsStep="10"
+     />
+  <View
+     android:id="@+id/tic_sub_bottom"
+     android:background="#8080ff"
+     android:layout_width="match_parent"
+     android:layout_height="50dp"
+     android:layout_alignLeft="@+id/plotter_sub"
+     android:layout_alignRight="@+id/plotter_sub"
+     android:layout_alignParentBottom="true"
+     />
+
+</RelativeLayout>

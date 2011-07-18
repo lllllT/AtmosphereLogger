@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <style name="BaseTheme" parent="@android:style/Theme.Holo.Light" />
+
+  <style name="MainTheme" parent="@style/BaseTheme">
+    <item name="primaryColor">#40ff40</item>
+    <item name="secondaryColor">#ff4040</item>
+    <item name="borderColor">#000000</item>
+    <item name="mainTicsColor">#c0c0c0</item>
+    <item name="subTicsColor">#e0e0e0</item>
+  </style>
+</resources>
