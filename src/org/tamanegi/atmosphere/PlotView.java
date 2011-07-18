@@ -40,8 +40,8 @@ public class PlotView extends View
     private long selection_start = -1;
     private long selection_end = -1;
 
-    private float value_min = 980;
-    private float value_range = 40;
+    private float value_min = 0;
+    private float value_max = 0;
 
     private int primary_color = 0xff808080;
     private int secondary_color = 0xff808080;
@@ -114,6 +114,7 @@ public class PlotView extends View
         int h = getHeight();
 
         double range = (double)(range_end - range_start);
+        float value_range = value_max - value_min;
 
         // tics: x-axis
         paint.setStrokeWidth(1);
@@ -342,8 +343,19 @@ public class PlotView extends View
     public void setValueRange(float min, float max)
     {
         value_min = min;
-        value_range = max - min;
+        value_max = max;
+        invalidate();
+    }
 
+    public void setValueRangeMin(float min)
+    {
+        value_min = min;
+        invalidate();
+    }
+
+    public void setValueRangeMax(float max)
+    {
+        value_max = max;
         invalidate();
     }
 
@@ -354,6 +366,6 @@ public class PlotView extends View
 
     public float getValueRangeMax()
     {
-        return value_min + value_range;
+        return value_max;
     }
 }
