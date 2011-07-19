@@ -9,6 +9,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.GestureDetector;
@@ -228,6 +229,17 @@ public class AtmosphereActivity extends Activity
         addAnimator(target, anim);
     }
 
+    private void startFlingAnimation(Object target, String prop,
+                                     int from, int to, long duration)
+    {
+        ObjectAnimator anim = ObjectAnimator.ofInt(target, prop, from, to);
+        anim.setDuration(duration);
+        anim.setInterpolator(AnimationUtils.loadInterpolator(
+                                 this, R.anim.plotter_fling_interpolator));
+        anim.start();
+        addAnimator(target, anim);
+    }
+
     private void addAnimator(Object target, Animator animator)
     {
         List<Animator> list = animator_map.get(target);
@@ -283,9 +295,21 @@ public class AtmosphereActivity extends Activity
     private class GestureListener
         extends GestureDetector.SimpleOnGestureListener
     {
+        private float deceleration;
+
+        private GestureListener()
+        {
+            float ppi = getResources().getDisplayMetrics().density * 160.0f;
+            float inch_per_meter = 39.37f;
+            deceleration =
+                SensorManager.GRAVITY_EARTH * inch_per_meter * ppi *
+                ViewConfiguration.getScrollFriction();
+        }
+
         @Override
         public boolean onDown(MotionEvent ev)
         {
+            cancelAllAnimator(selection_holder);
             return true;
         }
 
@@ -309,7 +333,17 @@ public class AtmosphereActivity extends Activity
         public boolean onFling(MotionEvent ev1, MotionEvent ev2,
                                float vx, float vy)
         {
-            // todo:
+            float duration = Math.abs(vx / deceleration);
+            float dx = -vx * duration / 2;
+            long dt = (long)(dx * PLOT_MAIN_RANGE / plotter_main.getWidth());
+            long cur_end = plotter_sub.getSelectionRangeEnd();
+
+            cancelAllAnimator(selection_holder);
+            selection_holder.end_from = cur_end;
+            selection_holder.end_to = cur_end + dt;
+            startFlingAnimation(selection_holder, "selectionRangeEnd",
+                                0, SelectionHolder.DIVISION,
+                                (long)(duration * 1000));
             return true;
         }
     }

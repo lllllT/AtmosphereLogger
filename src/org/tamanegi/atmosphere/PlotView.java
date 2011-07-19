@@ -231,7 +231,11 @@ public class PlotView extends View
         range_start = start;
         range_end = end;
 
-        if(adjustSelectionRange()) {
+        long org_start = selection_start;
+        long org_end = selection_end;
+        adjustSelectionRange();
+
+        if(org_start != selection_start || org_end != selection_end) {
             selectionChanged();
         }
         invalidate();
@@ -253,12 +257,16 @@ public class PlotView extends View
             return;
         }
 
+        long org_start = selection_start;
+        long org_end = selection_end;
         selection_start = start;
         selection_end = end;
-
         adjustSelectionRange();
-        selectionChanged();
-        invalidate();
+
+        if(org_start != selection_start || org_end != selection_end) {
+            selectionChanged();
+            invalidate();
+        }
     }
 
     public long getSelectionRangeStart()
@@ -271,14 +279,15 @@ public class PlotView extends View
         return selection_end;
     }
 
-    private boolean adjustSelectionRange()
+    private void adjustSelectionRange()
     {
         if(selection_start < 0 || selection_end < 0) {
-            return false;
+            return;
         }
 
         long org_start = selection_start;
         long org_end = selection_end;
+        long org_range = org_end - org_start;
 
         selection_start =
             Math.max(Math.min(selection_start, range_end), range_start);
@@ -286,15 +295,13 @@ public class PlotView extends View
             Math.max(Math.min(selection_end, range_end), range_start);
 
         if(range_end - range_start >= org_end - org_start) {
-            if(org_start != selection_start) {
-                selection_end = selection_start + (org_end - org_start);
+            if(selection_start + org_range <= range_end) {
+                selection_end = selection_start + org_range;
             }
-            else if(org_end != selection_end) {
-                selection_start = selection_end - (org_end - org_start);
+            else {
+                selection_start = selection_end - org_range;
             }
         }
-
-        return (org_start != selection_start || org_end != selection_end);
     }
 
     public void setValueRange(float min, float max)
