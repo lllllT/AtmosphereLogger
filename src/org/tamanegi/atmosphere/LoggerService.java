@@ -92,6 +92,9 @@ public class LoggerService extends IntentService
     {
         SensorManager manager = (SensorManager)getSystemService(SENSOR_SERVICE);
         Sensor sensor = manager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        if(sensor == null) {
+            return;
+        }
 
         Listener listener = new Listener();
         synchronized(listener) {

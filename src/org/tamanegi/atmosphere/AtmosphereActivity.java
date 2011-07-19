@@ -8,7 +8,10 @@ import java.util.Map;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -112,6 +115,30 @@ public class AtmosphereActivity extends Activity
     protected void onResume()
     {
         super.onResume();
+
+        SensorManager manager = (SensorManager)getSystemService(SENSOR_SERVICE);
+        Sensor sensor = manager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        if(sensor == null) {
+            new AlertDialog.Builder(this)
+                .setTitle(R.string.app_name)
+                .setMessage(R.string.msg_no_sensor)
+                .setPositiveButton(
+                    android.R.string.ok,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog,
+                                            int button) {
+                            finish();
+                        }
+                    })
+                .setOnCancelListener(
+                    new DialogInterface.OnCancelListener() {
+                        public void onCancel(DialogInterface dialog) {
+                            finish();
+                        }
+                    })
+                .show();
+            return;
+        }
 
         // start logger service, if not yet started
         Intent logger_intent = new Intent(this, LoggerService.class)
