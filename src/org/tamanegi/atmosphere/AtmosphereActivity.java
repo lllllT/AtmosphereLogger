@@ -108,6 +108,8 @@ public class AtmosphereActivity extends Activity
     @Override
     protected void onSaveInstanceState(Bundle state)
     {
+        super.onSaveInstanceState(state);
+
         state.putLong(KEY_PLOT_END, plot_end);
     }
 
