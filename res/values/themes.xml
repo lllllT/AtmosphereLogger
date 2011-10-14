@@ -8,7 +8,7 @@
     <item name="borderColor">#000000</item>
     <item name="mainTicsColor">#c0c0c0</item>
     <item name="subTicsColor">#e0e0e0</item>
-    <item name="textSize">15dp</item>
+    <item name="textSize">15sp</item>
     <item name="textColor">#000000</item>
   </style>
 </resources>
