@@ -2,5 +2,7 @@
 <resources>
   <string name="app_name">AtmosphereLogger</string>
 
+  <string name="menu_unit">Measurement unit</string>
+
   <string name="msg_no_sensor">This device has no pressure sensor.</string>
 </resources>

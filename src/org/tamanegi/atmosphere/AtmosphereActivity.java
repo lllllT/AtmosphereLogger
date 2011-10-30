@@ -16,6 +16,9 @@ import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.GestureDetector;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -157,6 +160,19 @@ public class AtmosphereActivity extends Activity
 
         handler.removeCallbacks(logdata_updater);
         handler.removeCallbacks(vtics_updater);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    public void onMenuUnitClick(MenuItem item)
+    {
+        // todo:
     }
 
     private void updateLogData()

@@ -2,5 +2,7 @@
 <resources>
   <string name="app_name">AtmosphereLogger</string>
 
+  <string name="menu_unit">計測単位</string>
+
   <string name="msg_no_sensor">この端末には圧力センサーが搭載されていません。</string>
 </resources>
