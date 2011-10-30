@@ -20,6 +20,7 @@ public class PlotView extends View
     private LogData.LogRecord[] records = null;
     private int record_cnt = 0;
 
+    private Paint paint;
     private Drawable selection_drawable;
     private OnSelectionChangeListener selection_listener = null;
 
@@ -90,6 +91,7 @@ public class PlotView extends View
 
     private void init(Context context)
     {
+        paint = new Paint();
         selection_drawable =
             context.getResources().getDrawable(R.drawable.plotter_selection);
     }
@@ -97,8 +99,6 @@ public class PlotView extends View
     @Override
     public void onDraw(Canvas canvas)
     {
-        Paint paint = new Paint();
-
         int w = getWidth();
         int h = getHeight();
 
