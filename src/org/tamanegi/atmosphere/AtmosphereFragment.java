@@ -436,7 +436,7 @@ public class AtmosphereFragment extends Fragment
         }
     }
 
-    private static class NoSensorDialogFragment extends DialogFragment
+    public static class NoSensorDialogFragment extends DialogFragment
     {
         @Override
         public Dialog onCreateDialog(Bundle savedState)
@@ -452,13 +452,13 @@ public class AtmosphereFragment extends Fragment
                             getActivity().finish();
                         }
                     })
-                .setOnCancelListener(
-                    new DialogInterface.OnCancelListener() {
-                        public void onCancel(DialogInterface dialog) {
-                            getActivity().finish();
-                        }
-                    })
                 .create();
+        }
+
+        @Override
+        public void onCancel(DialogInterface dialog)
+        {
+            getActivity().finish();
         }
     }
 }
