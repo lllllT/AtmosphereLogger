@@ -105,6 +105,8 @@ public class PlotView extends View
         double range = (double)(range_end - range_start);
         float value_range = value_max - value_min;
 
+        paint.setAlpha(0xff);
+
         // tics: x-axis
         paint.setStrokeWidth(1);
         {
@@ -163,6 +165,7 @@ public class PlotView extends View
         canvas.drawRect(0, 0, w, h, paint);
 
         // values
+        paint.setColor(primary_color);
         paint.setStrokeWidth(2);
 
         boolean is_first = true;
@@ -179,11 +182,18 @@ public class PlotView extends View
                 (int)(((records[i].value - value_min) / value_range) * h);
 
             if(! is_first) {
-                paint.setAlpha(
-                    (int)(((float)normal_interval /
-                           (records[i].time - records[i - 1].time)) * 0xff));
-                paint.setColor(primary_color);
+                int alpha = (int)
+                    (((float)normal_interval /
+                      (records[i].time - records[i - 1].time)) * 0xff);
+                if(alpha < 0x80) {
+                    paint.setAlpha(alpha);
+                }
+
                 canvas.drawLine(prev_x, prev_y, x, y, paint);
+
+                if(alpha < 0x80) {
+                    paint.setAlpha(0xff);
+                }
             }
             is_first = false;
             prev_x = x;
