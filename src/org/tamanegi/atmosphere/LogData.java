@@ -39,7 +39,7 @@ public class LogData
     {
         synchronized(LogData.class) {
             if(instance == null) {
-                instance = new LogData(context);
+                instance = new LogData(context.getApplicationContext());
             }
         }
 
