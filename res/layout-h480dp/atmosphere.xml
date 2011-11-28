@@ -56,7 +56,7 @@
      android:layout_height="wrap_content"
      android:layout_alignLeft="@+id/plotter_main"
      android:layout_alignRight="@+id/plotter_main"
-     android:layout_alignParentBottom="true"
+     android:layout_above="@+id/plotter_sub"
      app:ticsStep="day"
      />
 
@@ -68,7 +68,6 @@
      android:layout_alignParentRight="true"
      android:layout_above="@+id/tic_sub_bottom"
      android:layout_marginTop="12dp"
-     android:visibility="gone"
      app:mainTicsStep="month"
      app:subTicsStep="day"
      app:mainValueTicsStep="100"
@@ -81,7 +80,6 @@
      android:layout_alignLeft="@+id/plotter_sub"
      android:layout_alignRight="@+id/plotter_sub"
      android:layout_alignParentBottom="true"
-     android:visibility="gone"
      app:ticsStep="five_days"
      />
 
