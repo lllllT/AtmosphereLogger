@@ -34,7 +34,7 @@
      android:layout_alignParentTop="true"
      android:layout_alignParentRight="true"
      android:layout_toRightOf="@+id/tic_left"
-     android:layout_above="@+id/tic_bottom_qday"
+     android:layout_above="@+id/tic_bottom1"
      app:mainTicsStep="day"
      app:subTicsStep="hour"
      app:mainValueTicsStep="10"
@@ -42,16 +42,16 @@
      />
 
   <org.tamanegi.atmosphere.HorizontalTicsView
-     android:id="@+id/tic_bottom_qday"
+     android:id="@+id/tic_bottom1"
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
      android:layout_alignLeft="@+id/plotter_main"
      android:layout_alignRight="@+id/plotter_main"
-     android:layout_above="@+id/tic_bottom_day"
+     android:layout_above="@+id/tic_bottom2"
      app:ticsStep="qday"
      />
   <org.tamanegi.atmosphere.HorizontalTicsView
-     android:id="@+id/tic_bottom_day"
+     android:id="@+id/tic_bottom2"
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
      android:layout_alignLeft="@+id/plotter_main"

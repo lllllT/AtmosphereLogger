@@ -48,8 +48,8 @@ public class AtmosphereFragment extends Fragment
     private PlotView plotter_main;
     private PlotView plotter_sub;
     private VerticalTicsView vtics_main;
-    private HorizontalTicsView htics_main_qday;
-    private HorizontalTicsView htics_main_day;
+    private HorizontalTicsView htics_main1;
+    private HorizontalTicsView htics_main2;
     private HorizontalTicsView htics_sub;
 
     private SelectionHolder selection_holder;
@@ -117,12 +117,9 @@ public class AtmosphereFragment extends Fragment
 
         vtics_main = (VerticalTicsView)v.findViewById(R.id.tic_left);
 
-        htics_main_qday =
-            (HorizontalTicsView)v.findViewById(R.id.tic_bottom_qday);
-        htics_main_day =
-            (HorizontalTicsView)v.findViewById(R.id.tic_bottom_day);
-        htics_sub =
-            (HorizontalTicsView)v.findViewById(R.id.tic_sub_bottom);
+        htics_main1 = (HorizontalTicsView)v.findViewById(R.id.tic_bottom1);
+        htics_main2 = (HorizontalTicsView)v.findViewById(R.id.tic_bottom2);
+        htics_sub = (HorizontalTicsView)v.findViewById(R.id.tic_sub_bottom);
 
         return v;
     }
@@ -136,8 +133,8 @@ public class AtmosphereFragment extends Fragment
             getActivity().getSystemService(Context.SENSOR_SERVICE);
         Sensor sensor = manager.getDefaultSensor(Sensor.TYPE_PRESSURE);
         if(sensor == null) {
-            new NoSensorDialogFragment().show(getFragmentManager(), "NoSensor");
-            return;
+            //new NoSensorDialogFragment().show(getFragmentManager(), "NoSensor");
+            //return;
         }
 
         // start logger service, if not yet started
@@ -302,8 +299,8 @@ public class AtmosphereFragment extends Fragment
         public void onSelectionChanged(long start, long end)
         {
             plotter_main.setTimeRange(start, end);
-            htics_main_qday.setTimeRange(start, end);
-            htics_main_day.setTimeRange(start, end);
+            htics_main1.setTimeRange(start, end);
+            htics_main2.setTimeRange(start, end);
 
             handler.removeCallbacks(vtics_updater);
             handler.post(vtics_updater);
