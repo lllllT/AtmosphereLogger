@@ -10,12 +10,12 @@ public class TicsUtils
 {
     public enum TicsStep
     {
-        HOUR, DAY, WEEK, MONTH, QDAY, FIVE_DAYS
+        HOUR, DAY, WEEK, MONTH, QDAY, HDAY, FIVE_DAYS, TEN_DAYS
     }
 
     private static final TicsStep[] TICS_STEPS = {
         TicsStep.HOUR, TicsStep.DAY, TicsStep.WEEK, TicsStep.MONTH,
-        TicsStep.QDAY, TicsStep.FIVE_DAYS
+        TicsStep.QDAY, TicsStep.HDAY, TicsStep.FIVE_DAYS, TicsStep.TEN_DAYS
     };
 
     public static TicsStep getTicsStep(int idx)
@@ -47,7 +47,13 @@ public class TicsUtils
             if(step == TicsStep.FIVE_DAYS) {
                 day = (day / 5) * 5;
                 day = (day == 0 ? 1 :
-                       day >= 30 ? 25 :
+                       day > 25 ? 25 :
+                       day);
+            }
+            if(step == TicsStep.TEN_DAYS) {
+                day = (day / 10) * 10;
+                day = (day == 0 ? 1 :
+                       day > 20 ? 20 :
                        day);
             }
 
@@ -60,16 +66,7 @@ public class TicsUtils
 
     public static void incrementCalendar(Calendar cal, TicsStep step)
     {
-        if(step != TicsStep.FIVE_DAYS) {
-            int field = (step == TicsStep.HOUR ? Calendar.HOUR :
-                         step == TicsStep.QDAY ? Calendar.HOUR :
-                         step == TicsStep.DAY ? Calendar.DAY_OF_MONTH :
-                         step == TicsStep.WEEK ? Calendar.WEEK_OF_MONTH :
-                         Calendar.MONTH);
-            int cnt = (step == TicsStep.QDAY ? 6 : 1);
-            cal.add(field, cnt);
-        }
-        else {
+        if(step == TicsStep.FIVE_DAYS) {
             int day = cal.get(Calendar.DAY_OF_MONTH);
             day = (day < 5 ? 5 : day + 5);
             if(day <= 25) {
@@ -80,11 +77,34 @@ public class TicsUtils
                 cal.set(Calendar.DAY_OF_MONTH, 1);
             }
         }
+        else if(step == TicsStep.TEN_DAYS) {
+            int day = cal.get(Calendar.DAY_OF_MONTH);
+            day = (day < 10 ? 10 : day + 10);
+            if(day <= 20) {
+                cal.set(Calendar.DAY_OF_MONTH, day);
+            }
+            else {
+                cal.add(Calendar.MONTH, 1);
+                cal.set(Calendar.DAY_OF_MONTH, 1);
+            }
+        }
+        else {
+            int field = (step == TicsStep.HOUR ? Calendar.HOUR :
+                         step == TicsStep.QDAY ? Calendar.HOUR :
+                         step == TicsStep.HDAY ? Calendar.HOUR :
+                         step == TicsStep.DAY ? Calendar.DAY_OF_MONTH :
+                         step == TicsStep.WEEK ? Calendar.WEEK_OF_MONTH :
+                         Calendar.MONTH);
+            int cnt = (step == TicsStep.QDAY ? 6 :
+                       step == TicsStep.HDAY ? 12 : 1);
+            cal.add(field, cnt);
+        }
     }
 
     public static DateFormat getTicsDateFormat(Context context, TicsStep step)
     {
-        if(step == TicsStep.HOUR || step == TicsStep.QDAY) {
+        if(step == TicsStep.HOUR ||
+           step == TicsStep.QDAY || step == TicsStep.HDAY) {
             return android.text.format.DateFormat.getTimeFormat(context);
         }
         else {

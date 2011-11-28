@@ -133,8 +133,8 @@ public class AtmosphereFragment extends Fragment
             getActivity().getSystemService(Context.SENSOR_SERVICE);
         Sensor sensor = manager.getDefaultSensor(Sensor.TYPE_PRESSURE);
         if(sensor == null) {
-            //new NoSensorDialogFragment().show(getFragmentManager(), "NoSensor");
-            //return;
+            new NoSensorDialogFragment().show(getFragmentManager(), "NoSensor");
+            return;
         }
 
         // start logger service, if not yet started

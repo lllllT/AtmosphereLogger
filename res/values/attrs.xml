@@ -30,7 +30,9 @@
     <enum name="week" value="2" />
     <enum name="month" value="3" />
     <enum name="qday" value="4" />
-    <enum name="five_days" value="5" />
+    <enum name="hday" value="5" />
+    <enum name="five_days" value="6" />
+    <enum name="ten_days" value="7" />
   </attr>
 
   <declare-styleable name="HorizontalTicsView">
@@ -45,4 +47,35 @@
     <attr name="ticsStep" />
     <attr name="maxDigits" format="integer" />
   </declare-styleable>
+
+  <attr name="ticsStepPrimary1" format="integer">
+    <enum name="hour" value="0" />
+    <enum name="day" value="1" />
+    <enum name="week" value="2" />
+    <enum name="month" value="3" />
+    <enum name="qday" value="4" />
+    <enum name="hday" value="5" />
+    <enum name="five_days" value="6" />
+    <enum name="ten_days" value="7" />
+  </attr>
+  <attr name="ticsStepPrimary2" format="integer">
+    <enum name="hour" value="0" />
+    <enum name="day" value="1" />
+    <enum name="week" value="2" />
+    <enum name="month" value="3" />
+    <enum name="qday" value="4" />
+    <enum name="hday" value="5" />
+    <enum name="five_days" value="6" />
+    <enum name="ten_days" value="7" />
+  </attr>
+  <attr name="ticsStepSecondary" format="integer">
+    <enum name="hour" value="0" />
+    <enum name="day" value="1" />
+    <enum name="week" value="2" />
+    <enum name="month" value="3" />
+    <enum name="qday" value="4" />
+    <enum name="hday" value="5" />
+    <enum name="five_days" value="6" />
+    <enum name="ten_days" value="7" />
+  </attr>
 </resources>

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <style name="BaseTheme" parent="@android:style/Theme.Holo.Light" />
-
-  <style name="MainTheme" parent="@style/BaseTheme">
+  <style name="BaseTheme" parent="@android:style/Theme.Holo.Light">
     <item name="primaryColor">#40ff40</item>
     <item name="secondaryColor">#ff4040</item>
     <item name="borderColor">#000000</item>
@@ -11,4 +9,18 @@
     <item name="textSize">15sp</item>
     <item name="textColor">#000000</item>
   </style>
+
+  <style name="BaseTheme.Normal" parent="@style/BaseTheme">
+    <item name="ticsStepPrimary1">hday</item>
+    <item name="ticsStepPrimary2">day</item>
+    <item name="ticsStepSecondary">ten_days</item>
+  </style>
+
+  <style name="BaseTheme.Wide" parent="@style/BaseTheme">
+    <item name="ticsStepPrimary1">qday</item>
+    <item name="ticsStepPrimary2">day</item>
+    <item name="ticsStepSecondary">five_days</item>
+  </style>
+
+  <style name="MainTheme" parent="@style/BaseTheme.Normal" />
 </resources>
