@@ -92,6 +92,8 @@ public class PlotView extends View
     private void init(Context context)
     {
         paint = new Paint();
+        paint.setStyle(Paint.Style.STROKE);
+
         selection_drawable =
             context.getResources().getDrawable(R.drawable.plotter_selection);
     }
@@ -160,7 +162,6 @@ public class PlotView extends View
 
         // border
         paint.setColor(border_color);
-        paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(2);
         canvas.drawRect(0, 0, w, h, paint);
 
@@ -171,6 +172,8 @@ public class PlotView extends View
         boolean is_first = true;
         int prev_x = 0;
         int prev_y = 0;
+        float[] pts = new float[record_cnt * 4];
+        int pt_cnt = 0;
         for(int i = 0; i < record_cnt; i++) {
             if(records[i].time < range_start ||
                records[i].time > range_end) {
@@ -187,18 +190,23 @@ public class PlotView extends View
                       (records[i].time - records[i - 1].time)) * 0xff);
                 if(alpha < 0x80) {
                     paint.setAlpha(alpha);
+                    canvas.drawLine(prev_x, prev_y, x, y, paint);
                 }
-
-                canvas.drawLine(prev_x, prev_y, x, y, paint);
-
-                if(alpha < 0x80) {
-                    paint.setAlpha(0xff);
+                else {
+                    pts[pt_cnt + 0] = prev_x;
+                    pts[pt_cnt + 1] = prev_y;
+                    pts[pt_cnt + 2] = x;
+                    pts[pt_cnt + 3] = y;
+                    pt_cnt += 4;
                 }
             }
             is_first = false;
             prev_x = x;
             prev_y = y;
         }
+
+        paint.setAlpha(0xff);
+        canvas.drawLines(pts, 0, pt_cnt, paint);
 
         // selection
         if(selection_start >= 0 && selection_end >= 0) {
