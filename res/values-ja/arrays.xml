@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- measurement unit -->
+  <string-array name="unit_entries">
+    <item>hPa (= mbar)</item>
+    <item>mmHg (= Torr)</item>
+    <item>inHg</item>
+    <item>atm (標準気圧)</item>
+    <item>m (高度)</item>
+    <item>ft (高度)</item>
+  </string-array>
+</resources>

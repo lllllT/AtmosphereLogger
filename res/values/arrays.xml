@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- measurement unit -->
+  <string-array name="unit_entries">
+    <item>hPa (= mbar)</item>
+    <item>mmHg (= Torr)</item>
+    <item>inHg</item>
+    <item>atm (standard atmosphere)</item>
+    <item>m (altitude)</item>
+    <item>ft (altitude)</item>
+  </string-array>
+</resources>

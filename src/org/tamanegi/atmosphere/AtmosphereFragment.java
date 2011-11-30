@@ -14,12 +14,17 @@ import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -38,6 +43,8 @@ public class AtmosphereFragment extends Fragment
 
     private static final String KEY_PLOT_END =
         "org.tamanegi.atmosphere.PlotEnd";
+
+    private static final String PREF_UNIT = "unit";
 
     private LogData data;
     private LogData.LogRecord[] records;
@@ -73,10 +80,24 @@ public class AtmosphereFragment extends Fragment
 
     private Map<Object, List<Animator>> animator_map;
 
+    private SharedPreferences.OnSharedPreferenceChangeListener unit_listener =
+        new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences pref,
+                                                  String key) {
+                if(PREF_UNIT.equals(key)) {
+                    onUnitChanged(pref.getInt(key, 0));
+                }
+            }
+        };
+
     @Override
     public void onCreate(Bundle savedState)
     {
         super.onCreate(savedState);
+
+        setHasOptionsMenu(true);
+        PreferenceManager.getDefaultSharedPreferences(getActivity())
+            .registerOnSharedPreferenceChangeListener(unit_listener);
 
         if(savedState != null) {
             plot_end = savedState.getLong(KEY_PLOT_END, plot_end);
@@ -152,6 +173,28 @@ public class AtmosphereFragment extends Fragment
 
         handler.removeCallbacks(logdata_updater);
         handler.removeCallbacks(vtics_updater);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        inflater.inflate(R.menu.options_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        if(item.getItemId() == R.id.menu_unit) {
+            new UnitChooserDialogFragment().show(getFragmentManager(), "unit");
+            return true;
+        }
+
+        return false;
+    }
+
+    private void onUnitChanged(int unit_idx)
+    {
+        // todo:
     }
 
     private void updateLogData()
@@ -444,8 +487,7 @@ public class AtmosphereFragment extends Fragment
                 .setPositiveButton(
                     android.R.string.ok,
                     new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog,
-                                            int button) {
+                        public void onClick(DialogInterface dialog, int which) {
                             getActivity().finish();
                         }
                     })
@@ -456,6 +498,40 @@ public class AtmosphereFragment extends Fragment
         public void onCancel(DialogInterface dialog)
         {
             getActivity().finish();
+        }
+    }
+
+    public static class UnitChooserDialogFragment extends DialogFragment
+    {
+        @Override
+        public Dialog onCreateDialog(Bundle savedState)
+        {
+            int check_idx = getPreferences().getInt(PREF_UNIT, 0);
+
+            return new AlertDialog.Builder(getActivity())
+                .setTitle(R.string.menu_unit)
+                .setSingleChoiceItems(
+                    R.array.unit_entries, check_idx,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            setUnitPreference(which);
+                            dialog.dismiss();
+                        }
+                    })
+                .setNegativeButton(android.R.string.cancel, null)
+                .create();
+        }
+
+        private SharedPreferences getPreferences()
+        {
+            return PreferenceManager.getDefaultSharedPreferences(getActivity());
+        }
+
+        private void setUnitPreference(int idx)
+        {
+            SharedPreferences.Editor editor = getPreferences().edit();
+            editor.putInt(PREF_UNIT, idx);
+            editor.apply();
         }
     }
 }
