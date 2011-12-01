@@ -105,6 +105,15 @@ public class AtmosphereFragment extends Fragment
     }
 
     @Override
+    public void onDestroy()
+    {
+        super.onDestroy();
+
+        PreferenceManager.getDefaultSharedPreferences(getActivity())
+            .unregisterOnSharedPreferenceChangeListener(unit_listener);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle state)
     {
         super.onSaveInstanceState(state);
