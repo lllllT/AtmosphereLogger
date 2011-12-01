@@ -80,6 +80,7 @@ public class AtmosphereFragment extends Fragment
 
     private Map<Object, List<Animator>> animator_map;
 
+    private int measure_unit = 0;
     private SharedPreferences.OnSharedPreferenceChangeListener unit_listener =
         new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences pref,
@@ -96,6 +97,9 @@ public class AtmosphereFragment extends Fragment
         super.onCreate(savedState);
 
         setHasOptionsMenu(true);
+        measure_unit = PreferenceManager
+            .getDefaultSharedPreferences(getActivity())
+            .getInt(PREF_UNIT, 0);
         PreferenceManager.getDefaultSharedPreferences(getActivity())
             .registerOnSharedPreferenceChangeListener(unit_listener);
 
@@ -203,13 +207,21 @@ public class AtmosphereFragment extends Fragment
 
     private void onUnitChanged(int unit_idx)
     {
-        // todo:
+        measure_unit = unit_idx;
+        updateLogData();
     }
 
     private void updateLogData()
     {
         record_cnt = data.readRecords(records);
         long cur_time = System.currentTimeMillis();
+
+        // todo: convert unit from hPa
+        TicsUtils.PressureUnitConverter conv =
+            TicsUtils.getPressureUnitConverter(measure_unit);
+        for(int i = 0; i < record_cnt; i++) {
+            records[i].value = conv.convert(records[i].value);
+        }
 
         plotter_main.setData(records, record_cnt);
         plotter_main.setNormalInterval(LoggerService.LOG_INTERVAL);

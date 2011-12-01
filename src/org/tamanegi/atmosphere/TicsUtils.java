@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import android.content.Context;
+import android.hardware.SensorManager;
 
 public class TicsUtils
 {
@@ -110,5 +111,74 @@ public class TicsUtils
         else {
             return android.text.format.DateFormat.getDateFormat(context);
         }
+    }
+
+    public interface PressureUnitConverter
+    {
+        public float convert(float value);
+    }
+
+    // hPa -> hPa
+    private static PressureUnitConverter converter_hPa =
+        new PressureUnitConverter() {
+            @Override public float convert(float value) {
+                return value;
+            }
+        };
+
+    // hPa -> mmHg
+    private static PressureUnitConverter converter_mmHg =
+        new PressureUnitConverter() {
+            @Override public float convert(float value) {
+                return value * 0.7500616f;
+            }
+        };
+
+    // hPa -> inHg
+    private static PressureUnitConverter converter_inHg =
+        new PressureUnitConverter() {
+            @Override public float convert(float value) {
+                return value * 0.02952998f;
+            }
+        };
+
+    // hPa -> atm
+    private static PressureUnitConverter converter_atm =
+        new PressureUnitConverter() {
+            @Override public float convert(float value) {
+                return value * 0.0009869233f;
+            }
+        };
+
+    // hPa -> m
+    private static PressureUnitConverter converter_m =
+        new PressureUnitConverter() {
+            @Override public float convert(float value) {
+                return SensorManager.getAltitude(
+                    SensorManager.PRESSURE_STANDARD_ATMOSPHERE, value);
+            }
+        };
+
+    // hPa -> ft
+    private static PressureUnitConverter converter_ft
+        = new PressureUnitConverter() {
+                @Override public float convert(float value) {
+                    return 3.2808f * SensorManager.getAltitude(
+                        SensorManager.PRESSURE_STANDARD_ATMOSPHERE, value);
+                }
+            };
+
+    private static PressureUnitConverter[] converters = {
+        converter_hPa,
+        converter_mmHg,
+        converter_inHg,
+        converter_atm,
+        converter_m,
+        converter_ft,
+    };
+
+    public static PressureUnitConverter getPressureUnitConverter(int unit)
+    {
+        return converters[unit];
     }
 }
