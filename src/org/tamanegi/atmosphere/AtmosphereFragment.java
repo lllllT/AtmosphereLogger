@@ -30,14 +30,12 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 
 public class AtmosphereFragment extends Fragment
 {
     private static final long PLOT_MAIN_RANGE = 1000L * 60 * 60 * 24 * 2;
     private static final long PLOT_SUB_RANGE = 1000L * 60 * 60 * 24 * 30;
-
-    private static final int PLOT_VALUE_MAIN_TICS_STEP = 5;
-    private static final int PLOT_VALUE_SUB_TICS_STEP = 10;
 
     private static final int ANIMATION_DURATION = 500;
 
@@ -52,6 +50,7 @@ public class AtmosphereFragment extends Fragment
 
     private long plot_end = -1;
 
+    private TextView unit_label;
     private PlotView plotter_main;
     private PlotView plotter_sub;
     private VerticalTicsView vtics_main;
@@ -69,10 +68,11 @@ public class AtmosphereFragment extends Fragment
         };
     private Runnable vtics_updater = new Runnable() {
             @Override public void run() {
-                updateValueTics(plotter_main,
+                updateValueTics(plotter_main, vtics_main,
                                 plotter_sub.getSelectionRangeStart(),
                                 plotter_sub.getSelectionRangeEnd(),
-                                PLOT_VALUE_MAIN_TICS_STEP);
+                                unit_params.getMainPlotStride(),
+                                true);
             }
         };
 
@@ -81,6 +81,7 @@ public class AtmosphereFragment extends Fragment
     private Map<Object, List<Animator>> animator_map;
 
     private int measure_unit = 0;
+    private TicsUtils.UnitParameters unit_params;
     private SharedPreferences.OnSharedPreferenceChangeListener unit_listener =
         new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences pref,
@@ -100,6 +101,7 @@ public class AtmosphereFragment extends Fragment
         measure_unit = PreferenceManager
             .getDefaultSharedPreferences(getActivity())
             .getInt(PREF_UNIT, 0);
+        unit_params = TicsUtils.getUnitParameters(getActivity(), measure_unit);
         PreferenceManager.getDefaultSharedPreferences(getActivity())
             .registerOnSharedPreferenceChangeListener(unit_listener);
 
@@ -142,6 +144,8 @@ public class AtmosphereFragment extends Fragment
                                                new GestureListener());
         animator_map = new HashMap<Object, List<Animator>>();
 
+        unit_label = (TextView)v.findViewById(R.id.text_unit);
+
         plotter_main = (PlotView)v.findViewById(R.id.plotter_main);
         plotter_main.setOnTouchListener(new OnTouchMainPlotterListener());
 
@@ -154,6 +158,8 @@ public class AtmosphereFragment extends Fragment
         htics_main1 = (HorizontalTicsView)v.findViewById(R.id.tic_bottom1);
         htics_main2 = (HorizontalTicsView)v.findViewById(R.id.tic_bottom2);
         htics_sub = (HorizontalTicsView)v.findViewById(R.id.tic_sub_bottom);
+
+        updateViewParams();
 
         return v;
     }
@@ -208,7 +214,24 @@ public class AtmosphereFragment extends Fragment
     private void onUnitChanged(int unit_idx)
     {
         measure_unit = unit_idx;
+        unit_params = TicsUtils.getUnitParameters(getActivity(), measure_unit);
+
+        updateViewParams();
         updateLogData();
+    }
+
+    private void updateViewParams()
+    {
+        unit_label.setText(unit_params.getLabel());
+
+        vtics_main.setMaxDigits(unit_params.getVTicsDigits());
+        vtics_main.setValueStep(unit_params.getVTicsStep());
+        vtics_main.setFormat(unit_params.getVTicsFormat());
+
+        plotter_main.setValueStep(unit_params.getMainPlotMajorStep(),
+                                  unit_params.getMainPlotMinorStep());
+        plotter_sub.setValueStep(unit_params.getSubPlotMajorStep(),
+                                 unit_params.getSubPlotMinorStep());
     }
 
     private void updateLogData()
@@ -225,13 +248,20 @@ public class AtmosphereFragment extends Fragment
 
         plotter_main.setData(records, record_cnt);
         plotter_main.setNormalInterval(LoggerService.LOG_INTERVAL);
+        updateValueTics(plotter_main, vtics_main,
+                        plotter_sub.getSelectionRangeStart(),
+                        plotter_sub.getSelectionRangeEnd(),
+                        unit_params.getMainPlotStride(),
+                        false);
 
         plotter_sub.setData(records, record_cnt);
         plotter_sub.setNormalInterval(LoggerService.LOG_INTERVAL);
         plotter_sub.setTimeRange(cur_time - PLOT_SUB_RANGE, cur_time);
         htics_sub.setTimeRange(cur_time - PLOT_SUB_RANGE, cur_time);
-        updateValueTics(plotter_sub, cur_time - PLOT_SUB_RANGE, cur_time,
-                        PLOT_VALUE_SUB_TICS_STEP);
+        updateValueTics(plotter_sub, null,
+                        cur_time - PLOT_SUB_RANGE, cur_time,
+                        unit_params.getSubPlotStride(),
+                        false);
 
         updateSelectionRange();
 
@@ -246,8 +276,9 @@ public class AtmosphereFragment extends Fragment
                                       selection_end);
     }
 
-    private void updateValueTics(PlotView plotter,
-                                 long start, long end, int step)
+    private void updateValueTics(PlotView plotter, VerticalTicsView vtics,
+                                 long start, long end, float step,
+                                 boolean do_animate)
     {
         float min = Float.MAX_VALUE;
         float max = Float.MIN_VALUE;
@@ -271,26 +302,30 @@ public class AtmosphereFragment extends Fragment
             return;
         }
 
-        int low = (int)(((min - step) / step) + 0.5f) * step;
-        int high = (int)(((max + step) / step) + 0.5f) * step;
+        float low = Math.round((min - step) / step) * step;
+        float high = Math.round((max + step) / step) * step;
         float cur_low = plotter.getValueRangeMin();
         float cur_high = plotter.getValueRangeMax();
 
         if(low != cur_low || high != cur_high) {
             cancelAllAnimator(plotter);
-            cancelAllAnimator(vtics_main);
+            if(vtics != null) {
+                cancelAllAnimator(vtics);
+            }
 
-            if(cur_low == cur_high) {
+            if(! do_animate || cur_low == cur_high) {
                 plotter.setValueRange(low, high);
-                vtics_main.setValueRange(low, high);
+                if(vtics != null) {
+                    vtics.setValueRange(low, high);
+                }
             }
             else {
                 startValueAnimation(plotter, "valueRangeMin", cur_low, low);
                 startValueAnimation(plotter, "valueRangeMax", cur_high, high);
-                startValueAnimation(vtics_main, "valueRangeMin",
-                                    cur_low, low);
-                startValueAnimation(vtics_main, "valueRangeMax",
-                                    cur_high, high);
+                if(vtics != null) {
+                    startValueAnimation(vtics, "valueRangeMin", cur_low, low);
+                    startValueAnimation(vtics, "valueRangeMax", cur_high, high);
+                }
             }
         }
     }

@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.FloatMath;
 import android.view.View;
 
 public class PlotView extends View
@@ -40,8 +41,8 @@ public class PlotView extends View
     private TicsUtils.TicsStep main_tics = TicsUtils.TicsStep.HOUR;
     private int main_tics_color = 0xff202020;
 
-    private int value_main_step = 100;
-    private int value_sub_step = 10;
+    private float value_main_step = 100;
+    private float value_sub_step = 10;
 
     private TicsUtils.TicsStep sub_tics = TicsUtils.TicsStep.HOUR;
     private int sub_tics_color = 0xff404040;
@@ -80,11 +81,6 @@ public class PlotView extends View
             vals.getInt(R.styleable.PlotView_mainTicsStep, 0));
         sub_tics = TicsUtils.getTicsStep(
             vals.getInt(R.styleable.PlotView_subTicsStep, 0));
-
-        value_main_step = vals.getInteger(
-            R.styleable.PlotView_mainValueTicsStep, value_main_step);
-        value_sub_step = vals.getInteger(
-            R.styleable.PlotView_subValueTicsStep, value_sub_step);
 
         vals.recycle();
     }
@@ -139,23 +135,21 @@ public class PlotView extends View
         paint.setStrokeWidth(1);
         if(value_sub_step > 0) {
             paint.setColor(sub_tics_color);
-            int sub_min =
-                (int)((value_min + value_sub_step - 1) / value_sub_step) *
+            float sub_min = FloatMath.floor(
+                (value_min + value_sub_step) / value_sub_step) *
                 value_sub_step;
-            for(int v = 0; v < value_range; v += value_sub_step) {
-                int y = h -
-                    (int)(((sub_min + v - value_min) / value_range) * h);
+            for(float v = 0; v < value_range; v += value_sub_step) {
+                float y = h - ((sub_min + v - value_min) / value_range) * h;
                 canvas.drawLine(0, y, w, y, paint);
             }
         }
         if(value_main_step > 0) {
             paint.setColor(main_tics_color);
-            int main_min =
-                (int)((value_min + value_main_step - 1) / value_main_step) *
+            float main_min = FloatMath.floor(
+                (value_min + value_main_step) / value_main_step) *
                 value_main_step;
-            for(int v = 0; v < value_range; v += value_main_step) {
-                int y = h -
-                    (int)(((main_min + v - value_min) / value_range) * h);
+            for(float v = 0; v < value_range; v += value_main_step) {
+                float y = h - ((main_min + v - value_min) / value_range) * h;
                 canvas.drawLine(0, y, w, y, paint);
             }
         }
@@ -349,5 +343,12 @@ public class PlotView extends View
     public float getValueRangeMax()
     {
         return value_max;
+    }
+
+    public void setValueStep(float main_step, float sub_step)
+    {
+        value_main_step = main_step;
+        value_sub_step = sub_step;
+        invalidate();
     }
 }

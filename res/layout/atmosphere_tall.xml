@@ -6,39 +6,32 @@
    android:layout_height="match_parent"
    android:padding="6dp">
 
+  <TextView
+     android:id="@+id/text_unit"
+     android:layout_width="wrap_content"
+     android:layout_height="wrap_content"
+     android:layout_alignParentTop="true"
+     android:layout_alignParentLeft="true"
+     />
   <org.tamanegi.atmosphere.VerticalTicsView
      android:id="@+id/tic_left"
      android:layout_width="wrap_content"
      android:layout_height="match_parent"
-     android:layout_alignParentTop="true"
+     android:layout_below="@+id/text_unit"
      android:layout_alignParentLeft="true"
      android:layout_alignBottom="@+id/plotter_main"
      android:layout_marginRight="3dp"
-     app:ticsStep="5"
-     app:maxDigits="4"
-     />
-  <TextView
-     android:id="@+id/text_unit"
-     android:layout_width="match_parent"
-     android:layout_height="wrap_content"
-     android:layout_alignRight="@+id/tic_left"
-     android:layout_alignLeft="@+id/tic_left"
-     android:layout_below="@+id/tic_left"
-     android:text="[hPa]"
-     android:gravity="right|top"
      />
   <org.tamanegi.atmosphere.PlotView
      android:id="@+id/plotter_main"
      android:layout_width="match_parent"
      android:layout_height="match_parent"
-     android:layout_alignParentTop="true"
+     android:layout_below="@+id/text_unit"
      android:layout_alignParentRight="true"
      android:layout_toRightOf="@+id/tic_left"
      android:layout_above="@+id/tic_bottom1"
      app:mainTicsStep="day"
      app:subTicsStep="hour"
-     app:mainValueTicsStep="10"
-     app:subValueTicsStep="1"
      />
 
   <org.tamanegi.atmosphere.HorizontalTicsView
@@ -70,8 +63,6 @@
      android:layout_marginTop="12dp"
      app:mainTicsStep="month"
      app:subTicsStep="day"
-     app:mainValueTicsStep="100"
-     app:subValueTicsStep="10"
      />
   <org.tamanegi.atmosphere.HorizontalTicsView
      android:id="@+id/tic_sub_bottom"

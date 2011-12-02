@@ -5,6 +5,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
 import android.hardware.SensorManager;
 
 public class TicsUtils
@@ -180,5 +182,88 @@ public class TicsUtils
     public static PressureUnitConverter getPressureUnitConverter(int unit)
     {
         return converters[unit];
+    }
+
+    public static class UnitParameters
+    {
+        private static final int IDX_LABEL = 0;
+        private static final int IDX_VTICS_DIGITS = 1;
+        private static final int IDX_VTICS_STEP = 2;
+        private static final int IDX_VTICS_FORMAT = 3;
+        private static final int IDX_MAIN_MAJOR = 4;
+        private static final int IDX_MAIN_MINOR = 5;
+        private static final int IDX_MAIN_STRIDE = 6;
+        private static final int IDX_SUB_MAJOR = 7;
+        private static final int IDX_SUB_MINOR = 8;
+        private static final int IDX_SUB_STRIDE = 9;
+
+        private TypedArray params;
+
+        private UnitParameters(TypedArray params)
+        {
+            this.params = params;
+        }
+
+        public String getLabel()
+        {
+            return params.getString(IDX_LABEL);
+        }
+
+        public int getVTicsDigits()
+        {
+            return params.getInt(IDX_VTICS_DIGITS, 4);
+        }
+
+        public float getVTicsStep()
+        {
+            return params.getFloat(IDX_VTICS_STEP, 5);
+        }
+
+        public String getVTicsFormat()
+        {
+            return params.getString(IDX_VTICS_FORMAT);
+        }
+
+        public float getMainPlotMajorStep()
+        {
+            return params.getFloat(IDX_MAIN_MAJOR, 10);
+        }
+
+        public float getMainPlotMinorStep()
+        {
+            return params.getFloat(IDX_MAIN_MINOR, 1);
+        }
+
+        public float getMainPlotStride()
+        {
+            return params.getFloat(IDX_MAIN_STRIDE, 5);
+        }
+
+        public float getSubPlotMajorStep()
+        {
+            return params.getFloat(IDX_SUB_MAJOR, 100);
+        }
+
+        public float getSubPlotMinorStep()
+        {
+            return params.getFloat(IDX_SUB_MINOR, 10);
+        }
+
+        public float getSubPlotStride()
+        {
+            return params.getFloat(IDX_SUB_STRIDE, 10);
+        }
+    }
+
+    public static UnitParameters getUnitParameters(Context context, int unit)
+    {
+        Resources res = context.getResources();
+
+        TypedArray param_ids = res.obtainTypedArray(R.array.unit_params);
+        System.out.println("dbg: " + param_ids.getResourceId(unit, 0));
+        TypedArray params =
+            res.obtainTypedArray(param_ids.getResourceId(unit, 0));
+
+        return new UnitParameters(params);
     }
 }

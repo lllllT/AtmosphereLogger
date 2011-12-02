@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <!-- unit: hPa -->
+  <array name="unit_params_hPa">
+    <item>[hPa]</item> <!-- unit label -->
+    <item>4</item>     <!-- v-tics: max digits -->
+    <item>5</item>     <!-- v-tics: tics step -->
+    <item>%.0f</item>  <!-- v-tics: format -->
+    <item>10</item>    <!-- main plot: major tics step -->
+    <item>1</item>     <!-- main plot: minor tics step -->
+    <item>5</item>     <!-- main plot: tics stride -->
+    <item>100</item>   <!-- sub plot: major tics step -->
+    <item>10</item>    <!-- sub plot: minor tics step -->
+    <item>10</item>    <!-- sub plot: tics stride -->
+  </array>
+
+  <!-- unit: mmHg -->
+  <array name="unit_params_mmHg">
+    <item>[mmHg]</item> <!-- unit label -->
+    <item>3</item>     <!-- v-tics: max digits -->
+    <item>5</item>     <!-- v-tics: tics step -->
+    <item>%.0f</item>  <!-- v-tics: format -->
+    <item>10</item>    <!-- main plot: major tics step -->
+    <item>1</item>     <!-- main plot: minor tics step -->
+    <item>5</item>     <!-- main plot: tics stride -->
+    <item>100</item>   <!-- sub plot: major tics step -->
+    <item>10</item>    <!-- sub plot: minor tics step -->
+    <item>10</item>    <!-- sub plot: tics stride -->
+  </array>
+
+  <!-- unit: inHg -->
+  <array name="unit_params_inHg">
+    <item>[inHg]</item> <!-- unit label -->
+    <item>4</item>     <!-- v-tics: max digits -->
+    <item>0.5</item>   <!-- v-tics: tics step -->
+    <item>%.1f</item>  <!-- v-tics: format -->
+    <item>1</item>     <!-- main plot: major tics step -->
+    <item>0.1</item>   <!-- main plot: minor tics step -->
+    <item>0.5</item>   <!-- main plot: tics stride -->
+    <item>10</item>    <!-- sub plot: major tics step -->
+    <item>1</item>     <!-- sub plot: minor tics step -->
+    <item>1</item>     <!-- sub plot: tics stride -->
+  </array>
+
+  <!-- unit: atm -->
+  <array name="unit_params_atm">
+    <item>[atm]</item> <!-- unit label -->
+    <item>5</item>     <!-- v-tics: max digits -->
+    <item>0.005</item> <!-- v-tics: tics step -->
+    <item>%.3f</item>  <!-- v-tics: format -->
+    <item>0.01</item>  <!-- main plot: major tics step -->
+    <item>0.001</item> <!-- main plot: minor tics step -->
+    <item>0.005</item> <!-- main plot: tics stride -->
+    <item>0.1</item>   <!-- sub plot: major tics step -->
+    <item>0.01</item>  <!-- sub plot: minor tics step -->
+    <item>0.01</item>  <!-- sub plot: tics stride -->
+  </array>
+
+  <!-- unit: m -->
+  <array name="unit_params_m">
+    <item>[m]</item>   <!-- unit label -->
+    <item>5</item>     <!-- v-tics: max digits -->
+    <item>50</item>    <!-- v-tics: tics step -->
+    <item>%.0f</item>  <!-- v-tics: format -->
+    <item>100</item>   <!-- main plot: major tics step -->
+    <item>10</item>    <!-- main plot: minor tics step -->
+    <item>50</item>    <!-- main plot: tics stride -->
+    <item>1000</item>  <!-- sub plot: major tics step -->
+    <item>100</item>   <!-- sub plot: minor tics step -->
+    <item>100</item>   <!-- sub plot: tics stride -->
+  </array>
+
+  <!-- unit: ft -->
+  <array name="unit_params_ft">
+    <item>[ft]</item>  <!-- unit label -->
+    <item>5</item>     <!-- v-tics: max digits -->
+    <item>100</item>   <!-- v-tics: tics step -->
+    <item>%.0f</item>  <!-- v-tics: format -->
+    <item>500</item>   <!-- main plot: major tics step -->
+    <item>50</item>    <!-- main plot: minor tics step -->
+    <item>100</item>   <!-- main plot: tics stride -->
+    <item>1000</item>  <!-- sub plot: major tics step -->
+    <item>500</item>   <!-- sub plot: minor tics step -->
+    <item>500</item>   <!-- sub plot: tics stride -->
+  </array>
+
+  <!-- array of units -->
+  <array name="unit_params">
+    <item>@array/unit_params_hPa</item>
+    <item>@array/unit_params_mmHg</item>
+    <item>@array/unit_params_inHg</item>
+    <item>@array/unit_params_atm</item>
+    <item>@array/unit_params_m</item>
+    <item>@array/unit_params_ft</item>
+  </array>
+</resources>

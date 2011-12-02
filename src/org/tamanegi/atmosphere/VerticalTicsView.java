@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.FloatMath;
 import android.view.View;
 
 public class VerticalTicsView extends View
@@ -14,8 +15,9 @@ public class VerticalTicsView extends View
     private float value_min = 980;
     private float value_max = 1020;
 
-    private int value_step = 10;
-    private int max_digits = 4;
+    private float value_step = 10;
+    private float max_digits = 4;
+    private String number_format = "%f";
 
     public VerticalTicsView(Context context)
     {
@@ -43,11 +45,6 @@ public class VerticalTicsView extends View
         paint.setTextSize(tsize);
         paint.setColor(tcolor);
 
-        value_step =
-            vals.getInteger(R.styleable.VerticalTicsView_ticsStep, value_step);
-        max_digits =
-            vals.getInteger(R.styleable.VerticalTicsView_maxDigits, max_digits);
-
         vals.recycle();
     }
 
@@ -64,17 +61,19 @@ public class VerticalTicsView extends View
         int h = getHeight();
         float value_range = value_max - value_min;
 
-        int min = (int)((value_min + value_step - 1) / value_step) * value_step;
-        int max = (int)((value_max + value_step) / value_step) * value_step;
-        for(int v = 0; min + v < max; v += value_step) {
-            int y = h - (int)(((min + v - value_min) / value_range) * h);
+        float min = FloatMath.floor(value_min / value_step + 0.5f) * value_step;
+        float max = FloatMath.ceil(value_max / value_step + 0.5f) * value_step;
+        for(float v = 0; min + v < max; v += value_step) {
+            float y = h - ((min + v - value_min) / value_range) * h;
 
             float th2 = -paint.ascent() / 2;
             float tx = w;
             float ty = (y - th2 < 0 ? th2 * 2 :
                         y + th2 > h ? h :
                         y + th2);
-            canvas.drawText(String.valueOf(min + v), tx, ty, paint);
+
+            String str = String.format(number_format, min + v);
+            canvas.drawText(str, tx, ty, paint);
         }
     }
 
@@ -130,6 +129,24 @@ public class VerticalTicsView extends View
     public void setValueRangeMax(float max)
     {
         value_max = max;
+        invalidate();
+    }
+
+    public void setValueStep(float step)
+    {
+        value_step = step;
+        invalidate();
+    }
+
+    public void setMaxDigits(int digits)
+    {
+        max_digits = digits;
+        requestLayout();
+    }
+
+    public void setFormat(String format)
+    {
+        number_format = format;
         invalidate();
     }
 }

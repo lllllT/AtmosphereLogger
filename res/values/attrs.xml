@@ -18,8 +18,6 @@
       <enum name="week" value="2" />
       <enum name="month" value="3" />
     </attr>
-    <attr name="mainValueTicsStep" format="integer" />
-    <attr name="subValueTicsStep" format="integer" />
   </declare-styleable>
 
   <attr name="textSize" format="dimension" />
@@ -44,8 +42,6 @@
   <declare-styleable name="VerticalTicsView">
     <attr name="textSize" />
     <attr name="textColor" />
-    <attr name="ticsStep" />
-    <attr name="maxDigits" format="integer" />
   </declare-styleable>
 
   <attr name="ticsStepPrimary1" format="integer">
