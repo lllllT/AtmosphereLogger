@@ -298,7 +298,7 @@ public class AtmosphereFragment extends Fragment
             }
         }
         if(min > max) {
-            return;
+            min = max = unit_params.getDefaultValue();
         }
 
         float low = Math.round((min - step) / step) * step;

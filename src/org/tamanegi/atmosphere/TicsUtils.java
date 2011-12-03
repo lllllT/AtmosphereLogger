@@ -187,15 +187,16 @@ public class TicsUtils
     public static class UnitParameters
     {
         private static final int IDX_LABEL = 0;
-        private static final int IDX_VTICS_DIGITS = 1;
-        private static final int IDX_VTICS_STEP = 2;
-        private static final int IDX_VTICS_FORMAT = 3;
-        private static final int IDX_MAIN_MAJOR = 4;
-        private static final int IDX_MAIN_MINOR = 5;
-        private static final int IDX_MAIN_STRIDE = 6;
-        private static final int IDX_SUB_MAJOR = 7;
-        private static final int IDX_SUB_MINOR = 8;
-        private static final int IDX_SUB_STRIDE = 9;
+        private static final int IDX_DEF_VALUE = 1;
+        private static final int IDX_VTICS_DIGITS = 2;
+        private static final int IDX_VTICS_STEP = 3;
+        private static final int IDX_VTICS_FORMAT = 4;
+        private static final int IDX_MAIN_MAJOR = 5;
+        private static final int IDX_MAIN_MINOR = 6;
+        private static final int IDX_MAIN_STRIDE = 7;
+        private static final int IDX_SUB_MAJOR = 8;
+        private static final int IDX_SUB_MINOR = 9;
+        private static final int IDX_SUB_STRIDE = 10;
 
         private TypedArray params;
 
@@ -207,6 +208,11 @@ public class TicsUtils
         public String getLabel()
         {
             return params.getString(IDX_LABEL);
+        }
+
+        public float getDefaultValue()
+        {
+            return params.getFloat(IDX_DEF_VALUE, 1000);
         }
 
         public int getVTicsDigits()

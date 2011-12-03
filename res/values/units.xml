@@ -3,6 +3,7 @@
   <!-- unit: hPa -->
   <array name="unit_params_hPa">
     <item>[hPa]</item> <!-- unit label -->
+    <item>1000</item>  <!-- default value -->
     <item>4</item>     <!-- v-tics: max digits -->
     <item>5</item>     <!-- v-tics: tics step -->
     <item>%.0f</item>  <!-- v-tics: format -->
@@ -17,6 +18,7 @@
   <!-- unit: mmHg -->
   <array name="unit_params_mmHg">
     <item>[mmHg]</item> <!-- unit label -->
+    <item>750</item>    <!-- default value -->
     <item>3</item>     <!-- v-tics: max digits -->
     <item>5</item>     <!-- v-tics: tics step -->
     <item>%.0f</item>  <!-- v-tics: format -->
@@ -31,6 +33,7 @@
   <!-- unit: inHg -->
   <array name="unit_params_inHg">
     <item>[inHg]</item> <!-- unit label -->
+    <item>30</item>    <!-- default value -->
     <item>4</item>     <!-- v-tics: max digits -->
     <item>0.5</item>   <!-- v-tics: tics step -->
     <item>%.1f</item>  <!-- v-tics: format -->
@@ -45,6 +48,7 @@
   <!-- unit: atm -->
   <array name="unit_params_atm">
     <item>[atm]</item> <!-- unit label -->
+    <item>1</item>     <!-- default value -->
     <item>5</item>     <!-- v-tics: max digits -->
     <item>0.005</item> <!-- v-tics: tics step -->
     <item>%.3f</item>  <!-- v-tics: format -->
@@ -59,6 +63,7 @@
   <!-- unit: m -->
   <array name="unit_params_m">
     <item>[m]</item>   <!-- unit label -->
+    <item>0</item>     <!-- default value -->
     <item>5</item>     <!-- v-tics: max digits -->
     <item>50</item>    <!-- v-tics: tics step -->
     <item>%.0f</item>  <!-- v-tics: format -->
@@ -73,6 +78,7 @@
   <!-- unit: ft -->
   <array name="unit_params_ft">
     <item>[ft]</item>  <!-- unit label -->
+    <item>0</item>     <!-- default value -->
     <item>5</item>     <!-- v-tics: max digits -->
     <item>100</item>   <!-- v-tics: tics step -->
     <item>%.0f</item>  <!-- v-tics: format -->
