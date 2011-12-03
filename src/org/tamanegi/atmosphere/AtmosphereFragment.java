@@ -239,7 +239,6 @@ public class AtmosphereFragment extends Fragment
         record_cnt = data.readRecords(records);
         long cur_time = System.currentTimeMillis();
 
-        // todo: convert unit from hPa
         TicsUtils.PressureUnitConverter conv =
             TicsUtils.getPressureUnitConverter(measure_unit);
         for(int i = 0; i < record_cnt; i++) {
