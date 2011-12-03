@@ -266,7 +266,6 @@ public class TicsUtils
         Resources res = context.getResources();
 
         TypedArray param_ids = res.obtainTypedArray(R.array.unit_params);
-        System.out.println("dbg: " + param_ids.getResourceId(unit, 0));
         TypedArray params =
             res.obtainTypedArray(param_ids.getResourceId(unit, 0));
 
