@@ -401,7 +401,10 @@ public class AtmosphereFragment extends Fragment
             htics_main2.setTimeRange(start, end);
 
             handler.removeCallbacks(vtics_updater);
-            handler.post(vtics_updater);
+            if(isResumed()) {
+                // post only if resumed
+                handler.post(vtics_updater);
+            }
 
             long cur_time = System.currentTimeMillis();
             plot_end = (cur_time - end <= LoggerService.LOG_INTERVAL * 2 ?
