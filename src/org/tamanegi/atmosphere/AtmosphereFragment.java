@@ -241,9 +241,18 @@ public class AtmosphereFragment extends Fragment
 
         TicsUtils.PressureUnitConverter conv =
             TicsUtils.getPressureUnitConverter(measure_unit);
+        int cnt = 0;
         for(int i = 0; i < record_cnt; i++) {
-            records[i].value = conv.convert(records[i].value);
+            if(records[i].value < 1) {
+                // ignore invalid value
+                continue;
+            }
+
+            records[cnt].value = conv.convert(records[i].value);
+            records[cnt].time = records[i].time;
+            cnt += 1;
         }
+        record_cnt = cnt;
 
         plotter_main.setData(records, record_cnt);
         plotter_main.setNormalInterval(LoggerService.LOG_INTERVAL);
