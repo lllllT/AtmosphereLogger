@@ -1,0 +1,19 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 11
+    buildToolsVersion "20.0.0"
+
+    defaultConfig {
+        applicationId "org.tamanegi.atmosphere"
+        minSdkVersion 11
+        targetSdkVersion 11
+    }
+
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
