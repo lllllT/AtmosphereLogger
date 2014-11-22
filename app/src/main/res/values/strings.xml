@@ -5,4 +5,5 @@
   <string name="menu_unit">Measurement unit</string>
 
   <string name="msg_no_sensor">This device has no pressure sensor.</string>
+  <string name="menu_filter">Ignore noisy values</string>
 </resources>

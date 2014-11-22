@@ -39,10 +39,14 @@ public class AtmosphereFragment extends Fragment
 
     private static final int ANIMATION_DURATION = 500;
 
+    private static final float DOUBTFULLY_DIFF = 30.0f / (5 * 60 * 1000);
+    private static final long DOUBTFULLY_INTERVAL = 6 * 60 * 1000;
+
     private static final String KEY_PLOT_END =
         "org.tamanegi.atmosphere.PlotEnd";
 
     private static final String PREF_UNIT = "unit";
+    private static final String PREF_FILTER = "filter";
 
     private LogData data;
     private LogData.LogRecord[] records;
@@ -92,18 +96,21 @@ public class AtmosphereFragment extends Fragment
             }
         };
 
+    private boolean ignoreDoubtfully;
+
     @Override
     public void onCreate(Bundle savedState)
     {
         super.onCreate(savedState);
 
+        SharedPreferences preferences = PreferenceManager
+                .getDefaultSharedPreferences(getActivity());
+
         setHasOptionsMenu(true);
-        measure_unit = PreferenceManager
-            .getDefaultSharedPreferences(getActivity())
-            .getInt(PREF_UNIT, 0);
+        measure_unit = preferences.getInt(PREF_UNIT, 0);
         unit_params = TicsUtils.getUnitParameters(getActivity(), measure_unit);
-        PreferenceManager.getDefaultSharedPreferences(getActivity())
-            .registerOnSharedPreferenceChangeListener(unit_listener);
+        preferences.registerOnSharedPreferenceChangeListener(unit_listener);
+        ignoreDoubtfully = preferences.getBoolean(PREF_FILTER, true);
 
         if(savedState != null) {
             plot_end = savedState.getLong(KEY_PLOT_END, plot_end);
@@ -201,10 +208,30 @@ public class AtmosphereFragment extends Fragment
     }
 
     @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        MenuItem item = menu.findItem(R.id.menu_filter);
+        if(item != null) {
+            item.setChecked(ignoreDoubtfully);
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
         if(item.getItemId() == R.id.menu_unit) {
             new UnitChooserDialogFragment().show(getFragmentManager(), "unit");
+            return true;
+        }
+        if(item.getItemId() == R.id.menu_filter) {
+            ignoreDoubtfully = !ignoreDoubtfully;
+            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getActivity()).edit();
+            editor.putBoolean(PREF_FILTER, ignoreDoubtfully);
+            editor.apply();
+
+            updateLogData();
+
             return true;
         }
 
@@ -248,6 +275,23 @@ public class AtmosphereFragment extends Fragment
                 continue;
             }
 
+            if(ignoreDoubtfully) {
+                int doubtfully = 0;
+                if (i > 0 && isDoubtfully(records[i], records[i - 1])) {
+                    doubtfully += 1;
+                }
+                if (i < record_cnt - 1 && isDoubtfully(records[i], records[i + 1])) {
+                    doubtfully += 1;
+                }
+                if (i == 0 || i == record_cnt - 1) {
+                    doubtfully += 1;
+                }
+                if (doubtfully >= 2) {
+                    // ignore doubtfully value
+                    continue;
+                }
+            }
+
             records[cnt].value = conv.convert(records[i].value);
             records[cnt].time = records[i].time;
             cnt += 1;
@@ -274,6 +318,12 @@ public class AtmosphereFragment extends Fragment
         updateSelectionRange();
 
         handler.postDelayed(logdata_updater, LoggerService.LOG_INTERVAL);
+    }
+
+    private boolean isDoubtfully(LogData.LogRecord r1, LogData.LogRecord r2) {
+        long timeDiff = r1.time - r2.time;
+        float valueDiff = r1.value - r2.value;
+        return timeDiff > DOUBTFULLY_INTERVAL || Math.abs(valueDiff / timeDiff) > DOUBTFULLY_DIFF;
     }
 
     private void updateSelectionRange()
