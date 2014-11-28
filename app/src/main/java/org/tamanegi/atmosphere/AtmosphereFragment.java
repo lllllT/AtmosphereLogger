@@ -39,8 +39,7 @@ public class AtmosphereFragment extends Fragment
 
     private static final int ANIMATION_DURATION = 500;
 
-    private static final float DOUBTFULLY_DIFF = 30.0f / (5 * 60 * 1000);
-    private static final long DOUBTFULLY_INTERVAL = 6 * 60 * 1000;
+    private static final float DOUBTFULLY_DIFF = 30.0f;
 
     private static final String KEY_PLOT_END =
         "org.tamanegi.atmosphere.PlotEnd";
@@ -276,17 +275,17 @@ public class AtmosphereFragment extends Fragment
             }
 
             if(ignoreDoubtfully) {
-                int doubtfully = 0;
-                if (i > 0 && isDoubtfully(records[i], records[i - 1])) {
-                    doubtfully += 1;
+                float doubtfully = 0;
+                if (i > 0) {
+                    doubtfully += getDoubtfully(records[i - 1], records[i]);
                 }
-                if (i < record_cnt - 1 && isDoubtfully(records[i], records[i + 1])) {
-                    doubtfully += 1;
+                if (i < record_cnt - 1) {
+                    doubtfully -= getDoubtfully(records[i], records[i + 1]);
                 }
                 if (i == 0 || i == record_cnt - 1) {
-                    doubtfully += 1;
+                    doubtfully *= 2;
                 }
-                if (doubtfully >= 2) {
+                if (Math.abs(doubtfully) > 2) {
                     // ignore doubtfully value
                     continue;
                 }
@@ -320,10 +319,9 @@ public class AtmosphereFragment extends Fragment
         handler.postDelayed(logdata_updater, LoggerService.LOG_INTERVAL);
     }
 
-    private boolean isDoubtfully(LogData.LogRecord r1, LogData.LogRecord r2) {
-        long timeDiff = r1.time - r2.time;
-        float valueDiff = r1.value - r2.value;
-        return timeDiff > DOUBTFULLY_INTERVAL || Math.abs(valueDiff / timeDiff) > DOUBTFULLY_DIFF;
+    private float getDoubtfully(LogData.LogRecord r1, LogData.LogRecord r2) {
+        float valueDiff = r2.value - r1.value;
+        return valueDiff / DOUBTFULLY_DIFF;
     }
 
     private void updateSelectionRange()
