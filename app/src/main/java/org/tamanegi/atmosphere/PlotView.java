@@ -18,6 +18,9 @@ public class PlotView extends View
         public void onSelectionChanged(long start, long end);
     }
 
+    private static final double INTERVAL_THRESHOLD = 0.4;
+    private static final double INTERVAL_BIAS = 0.8;
+
     private LogData.LogRecord[] records = null;
     private int record_cnt = 0;
 
@@ -179,9 +182,15 @@ public class PlotView extends View
                 (int)(((records[i].value - value_min) / value_range) * h);
 
             if(! is_first) {
-                int alpha = (int)
-                    (((float)normal_interval /
-                      (records[i].time - records[i - 1].time)) * 0xff);
+                double ratio = (double)normal_interval / (records[i].time - records[i - 1].time);
+                if(ratio > INTERVAL_THRESHOLD) {
+                    ratio = ratio * (1 - INTERVAL_BIAS) + INTERVAL_BIAS;
+                }
+                else {
+                    ratio = ratio * (INTERVAL_THRESHOLD * (1 - INTERVAL_BIAS) + INTERVAL_BIAS) / INTERVAL_THRESHOLD;
+                }
+
+                int alpha = (int)(ratio * 0xff);
                 if(alpha < 0x80) {
                     paint.setAlpha(alpha);
                     canvas.drawLine(prev_x, prev_y, x, y, paint);
