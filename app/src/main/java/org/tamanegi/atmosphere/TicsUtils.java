@@ -268,7 +268,14 @@ public class TicsUtils
         TypedArray param_ids = res.obtainTypedArray(R.array.unit_params);
         TypedArray params =
             res.obtainTypedArray(param_ids.getResourceId(unit, 0));
+		if (param_ids != null) {
+			param_ids.recycle();
+		}
 
-        return new UnitParameters(params);
+        final UnitParameters returnValueAutoRefactor = new UnitParameters(params);
+		if (params != null) {
+			params.recycle();
+		}
+		return returnValueAutoRefactor;
     }
 }
