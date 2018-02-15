@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="app_name">AtmosphereLogger</string>
+
+  <string name="menu_unit">Unidade de Medida</string>
+
+  <string name="msg_no_sensor">Este dispositivo não possui sensor de pressão.</string>
+  <string name="menu_filter">Ignorar valores distorcidos</string>
+</resources>
