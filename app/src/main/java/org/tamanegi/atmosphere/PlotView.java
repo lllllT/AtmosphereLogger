@@ -138,21 +138,21 @@ public class PlotView extends View
         paint.setStrokeWidth(1);
         if(value_sub_step > 0) {
             paint.setColor(sub_tics_color);
-            float sub_min = FloatMath.floor(
+            double sub_min = Math.floor(
                 (value_min + value_sub_step) / value_sub_step) *
                 value_sub_step;
             for(float v = 0; v < value_range; v += value_sub_step) {
-                float y = h - ((sub_min + v - value_min) / value_range) * h;
+                float y = (float) (h - ((sub_min + v - value_min) / value_range) * h);
                 canvas.drawLine(0, y, w, y, paint);
             }
         }
         if(value_main_step > 0) {
             paint.setColor(main_tics_color);
-            float main_min = FloatMath.floor(
+            double main_min = Math.floor(
                 (value_min + value_main_step) / value_main_step) *
                 value_main_step;
             for(float v = 0; v < value_range; v += value_main_step) {
-                float y = h - ((main_min + v - value_min) / value_range) * h;
+                float y = (float) (h - ((main_min + v - value_min) / value_range) * h);
                 canvas.drawLine(0, y, w, y, paint);
             }
         }

@@ -61,19 +61,19 @@ public class VerticalTicsView extends View
         int h = getHeight();
         float value_range = value_max - value_min;
 
-        float min = FloatMath.floor(value_min / value_step + 0.5f) * value_step;
-        float max = FloatMath.ceil(value_max / value_step + 0.5f) * value_step;
+        double min = Math.floor(value_min / value_step + 0.5f) * value_step;
+        double max = Math.ceil(value_max / value_step + 0.5f) * value_step;
         for(float v = 0; min + v < max; v += value_step) {
-            float y = h - ((min + v - value_min) / value_range) * h;
+            double y = h - ((min + v - value_min) / value_range) * h;
 
             float th2 = -paint.ascent() / 2;
             float tx = w;
-            float ty = (y - th2 < 0 ? th2 * 2 :
+            double ty = (y - th2 < 0 ? th2 * 2 :
                         y + th2 > h ? h :
                         y + th2);
 
             String str = String.format(number_format, min + v);
-            canvas.drawText(str, tx, ty, paint);
+            canvas.drawText(str, tx, (float) ty, paint);
         }
     }
 
