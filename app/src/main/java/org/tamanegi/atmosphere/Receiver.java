@@ -21,14 +21,14 @@ public class Receiver extends BroadcastReceiver
             PowerManager pmgr = (PowerManager)context.getApplicationContext()
                 .getSystemService(Context.POWER_SERVICE);
             PowerManager.WakeLock wakelock = pmgr.newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK, "Receiver.Measure");
+                PowerManager.PARTIAL_WAKE_LOCK, "AtmosphereLogger:Receiver.Measure");
 
             Intent logger_intent = new Intent(context, LoggerService.class)
                 .setAction(LoggerService.ACTION_MEASURE)
                 .putExtra(LoggerService.EXTRA_RESULT_RECEIVER,
                           new WakeResultReceiver(wakelock));
 
-            wakelock.acquire();
+            wakelock.acquire(LoggerService.TIMEOUT_MSEC);
             context.startService(logger_intent);
         }
     }
