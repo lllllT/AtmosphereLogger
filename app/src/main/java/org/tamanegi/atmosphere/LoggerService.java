@@ -113,14 +113,17 @@ public class LoggerService extends IntentService
             manager.unregisterListener(listener);
         }
 
-        LogData log = LogData.getInstance(this);
-        log.writeRecord(new LogData.LogRecord(listener.time, listener.value));
+        if(listener.measured) {
+            LogData log = LogData.getInstance(this);
+            log.writeRecord(new LogData.LogRecord(listener.time, listener.value));
+        }
     }
 
     private static class Listener implements SensorEventListener
     {
         private long time;
         private float value;
+        private boolean measured = false;
 
         @Override
         public void onAccuracyChanged(Sensor sensor, int accuracy)
@@ -133,6 +136,7 @@ public class LoggerService extends IntentService
         {
             value = event.values[0];
             time = System.currentTimeMillis();
+            measured = true;
 
             synchronized(this) {
                 notify();
