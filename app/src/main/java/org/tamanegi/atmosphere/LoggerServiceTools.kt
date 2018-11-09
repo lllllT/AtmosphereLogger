@@ -39,7 +39,7 @@ fun Service.startForegroundLogger() {
 
     builder.setContentTitle(getString(R.string.app_name))
             .setContentText(getString(R.string.measuring))
-            .setSmallIcon(R.drawable.icon)
+            .setSmallIcon(R.drawable.ic_notification)
 
     val notification = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
         builder.build()
