@@ -184,9 +184,7 @@ public class AtmosphereFragment extends Fragment
         }
 
         // start logger service, if not yet started
-        Intent logger_intent = new Intent(getActivity(), LoggerService.class)
-            .setAction(LoggerService.ACTION_START_LOGGING);
-        getActivity().startService(logger_intent);
+        LoggerTools.startLogging(getActivity());
 
         updateLogData();
     }

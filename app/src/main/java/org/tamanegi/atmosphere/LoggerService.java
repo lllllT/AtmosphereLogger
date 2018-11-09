@@ -4,10 +4,6 @@ import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -24,8 +20,9 @@ public class LoggerService extends IntentService
 
     public static final String EXTRA_RESULT_RECEIVER = "resultReceiver";
 
-    static final int TIMEOUT_MSEC = 10 * 1000;
-    static final int LOG_INTERVAL = 5 * 60 * 1000;
+    static final long TIMEOUT_MSEC = 10 * 1000;
+    static final long LOG_INTERVAL = 15 * 60 * 1000;
+    static final long LOG_INTERVAL_FLEX = 5 * 60 * 1000;
 
     private Handler handler;
 
@@ -90,57 +87,8 @@ public class LoggerService extends IntentService
 
     private void measure()
     {
-        SensorManager manager = (SensorManager)getSystemService(SENSOR_SERVICE);
-        Sensor sensor = manager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        if(sensor == null) {
-            return;
-        }
-
-        Listener listener = new Listener();
-        synchronized(listener) {
-            if(! manager.registerListener(
-                   listener, sensor,
-                   SensorManager.SENSOR_DELAY_NORMAL, handler)) {
-                return;
-            }
-
-            try {
-                listener.wait(TIMEOUT_MSEC);
-            }
-            catch(Exception e) {
-                // ignore
-            }
-            manager.unregisterListener(listener);
-        }
-
-        if(listener.measured) {
-            LogData log = LogData.getInstance(this);
-            log.writeRecord(new LogData.LogRecord(listener.time, listener.value));
-        }
-    }
-
-    private static class Listener implements SensorEventListener
-    {
-        private long time;
-        private float value;
-        private boolean measured = false;
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy)
-        {
-            // do nothing
-        }
-
-        @Override
-        public void onSensorChanged(SensorEvent event)
-        {
-            value = event.values[0];
-            time = System.currentTimeMillis();
-            measured = true;
-
-            synchronized(this) {
-                notify();
-            }
-        }
+        LoggerServiceTools.startForegroundLogger(this);
+        LoggerTools.measure(this, handler);
+        LoggerServiceTools.stopForegroundLogger(this);
     }
 }

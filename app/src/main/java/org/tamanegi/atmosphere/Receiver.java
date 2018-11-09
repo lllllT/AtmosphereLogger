@@ -13,9 +13,7 @@ public class Receiver extends BroadcastReceiver
     public void onReceive(Context context, Intent intent)
     {
         if(Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            Intent logger_intent = new Intent(context, LoggerService.class)
-                .setAction(LoggerService.ACTION_START_LOGGING);
-            context.startService(logger_intent);
+            LoggerTools.startLogging(context);
         }
         else if(LoggerService.ACTION_MEASURE.equals(intent.getAction())) {
             PowerManager pmgr = (PowerManager)context.getApplicationContext()

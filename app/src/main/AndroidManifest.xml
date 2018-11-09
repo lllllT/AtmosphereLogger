@@ -1,33 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="org.tamanegi.atmosphere">
+<manifest package="org.tamanegi.atmosphere"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <uses-feature android:name="android.hardware.sensor.barometer" />
+    <uses-feature android:name="android.hardware.sensor.barometer"/>
 
-  <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-  <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" android:maxSdkVersion="20"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
-  <application android:icon="@drawable/icon"
-               android:label="@string/app_name"
-               android:theme="@style/MainTheme"
-               android:allowBackup="true"
-               android:hardwareAccelerated="true">
+    <application
+        android:allowBackup="true"
+        android:hardwareAccelerated="true"
+        android:icon="@drawable/icon"
+        android:label="@string/app_name"
+        android:theme="@style/MainTheme">
+        <activity
+            android:name=".AtmosphereActivity"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
 
-    <activity android:name=".AtmosphereActivity"
-              android:label="@string/app_name">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-    </activity>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
 
-    <service android:name=".LoggerService" />
+        <service android:name=".LoggerService"/>
 
-    <receiver android:name=".Receiver">
-      <intent-filter>
-        <action android:name="android.intent.action.BOOT_COMPLETED" />
-      </intent-filter>
-    </receiver>
+        <receiver android:name=".Receiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
 
-  </application>
+        <service
+            android:name=".LoggerJobService"
+            android:permission="android.permission.BIND_JOB_SERVICE"
+            android:enabled="true"
+            android:exported="true">
+        </service>
+    </application>
+
 </manifest>
