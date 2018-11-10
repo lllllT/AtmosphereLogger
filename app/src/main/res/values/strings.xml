@@ -7,5 +7,5 @@
   <string name="msg_no_sensor">This device has no pressure sensor.</string>
   <string name="menu_filter">Ignore noisy values</string>
     <string name="notification_channel_logger">Measurement</string>
-    <string name="measuring">Measuring</string>
+    <string name="measuring">Measuring...</string>
 </resources>

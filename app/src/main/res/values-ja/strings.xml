@@ -7,5 +7,5 @@
   <string name="msg_no_sensor">この端末には圧力センサーが搭載されていません。</string>
     <string name="menu_filter">ノイズ値を無視</string>
     <string name="notification_channel_logger">計測</string>
-    <string name="measuring">計測中</string>
+    <string name="measuring">計測中...</string>
 </resources>
