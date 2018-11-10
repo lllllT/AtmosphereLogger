@@ -3,6 +3,7 @@ package org.tamanegi.atmosphere;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.ResultReceiver;
@@ -16,7 +17,8 @@ public class Receiver extends BroadcastReceiver
                 Intent.ACTION_MY_PACKAGE_REPLACED.equals(intent.getAction())) {
             LoggerTools.startLogging(context);
         }
-        else if(LoggerService.ACTION_MEASURE.equals(intent.getAction())) {
+        else if(LoggerService.ACTION_MEASURE.equals(intent.getAction()) &&
+                (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)) {
             PowerManager pmgr = (PowerManager)context.getApplicationContext()
                 .getSystemService(Context.POWER_SERVICE);
             PowerManager.WakeLock wakelock = pmgr.newWakeLock(

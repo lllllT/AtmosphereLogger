@@ -19,6 +19,12 @@ val JOB_ID_MEASURE = 1
 
 fun startLogging(context: Context) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        // cancel previously scheduled alarm
+        val cancelIntent = Intent(context, LoggerService::class.java)
+                .setAction(LoggerService.ACTION_STOP_LOGGING)
+        context.startService(cancelIntent)
+
+        // schedule job if not yet scheduled
         val jobScheduler = context.getSystemService(Context.JOB_SCHEDULER_SERVICE) as JobScheduler
         val alreadyStarted = jobScheduler.allPendingJobs.any { it.id == JOB_ID_MEASURE }
         if(alreadyStarted) {
