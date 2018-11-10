@@ -13,7 +13,6 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
@@ -230,6 +229,9 @@ public class AtmosphereFragment extends Fragment
             updateLogData();
 
             return true;
+        }
+        if(item.getItemId() == R.id.menu_export) {
+            LogDataTools.convertAndExportData(getActivity());
         }
 
         return false;
