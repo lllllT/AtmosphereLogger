@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:tools="http://schemas.android.com/tools"
-          package="org.tamanegi.atmosphere"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="org.tamanegi.atmosphere"
+          xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature android:name="android.hardware.sensor.barometer"/>
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
-    <uses-permission android:name="android.permission.WAKE_LOCK" android:maxSdkVersion="20"/>
+    <uses-permission
+        android:name="android.permission.WAKE_LOCK"
+        android:maxSdkVersion="20"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:hardwareAccelerated="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@style/MainTheme"
-        tools:ignore="GoogleAppIndexingWarning"
-        android:fullBackupContent="@xml/backup_descriptor">
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
             android:name=".AtmosphereActivity"
             android:label="@string/app_name">
@@ -40,10 +42,18 @@
 
         <service
             android:name=".LoggerJobService"
-            android:permission="android.permission.BIND_JOB_SERVICE"
             android:enabled="true"
-            android:exported="true">
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE">
         </service>
+
+        <provider
+            android:name=".LogContentProvider"
+            android:authorities="org.tamanegi.atmosphere.log"
+            android:enabled="true"
+            android:exported="true"
+            tools:ignore="ExportedContentProvider">
+        </provider>
     </application>
 
 </manifest>
