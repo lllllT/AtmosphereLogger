@@ -61,28 +61,12 @@ public class LoggerService extends IntentService
 
     private void startLogging()
     {
-        LogData log = LogData.getInstance(this);
-        long lasttime = log.getLastTimestamp();
-        long nexttime = (lasttime > 0 ? lasttime + LOG_INTERVAL :
-                         System.currentTimeMillis() + LOG_INTERVAL);
-
-        AlarmManager amgr = (AlarmManager)getSystemService(ALARM_SERVICE);
-        amgr.setInexactRepeating(AlarmManager.RTC_WAKEUP,
-                                 nexttime, LOG_INTERVAL, getMeasureIntent());
+        LoggerAlarmTools.startLoggingAlarm(this);
     }
 
     private void stopLogging()
     {
-        AlarmManager amgr = (AlarmManager)getSystemService(ALARM_SERVICE);
-        amgr.cancel(getMeasureIntent());
-    }
-
-    private PendingIntent getMeasureIntent()
-    {
-        Intent intent = new Intent(this, Receiver.class)
-            .setAction(ACTION_MEASURE);
-        return PendingIntent.getBroadcast(this, 0, intent,
-                                          PendingIntent.FLAG_UPDATE_CURRENT);
+        LoggerAlarmTools.stopLoggingAlarm(this);
     }
 
     private void measure()

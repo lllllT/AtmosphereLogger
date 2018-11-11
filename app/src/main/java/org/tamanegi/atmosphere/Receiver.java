@@ -17,20 +17,25 @@ public class Receiver extends BroadcastReceiver
                 Intent.ACTION_MY_PACKAGE_REPLACED.equals(intent.getAction())) {
             LoggerTools.startLogging(context);
         }
-        else if(LoggerService.ACTION_MEASURE.equals(intent.getAction()) &&
-                (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)) {
-            PowerManager pmgr = (PowerManager)context.getApplicationContext()
-                .getSystemService(Context.POWER_SERVICE);
-            PowerManager.WakeLock wakelock = pmgr.newWakeLock(
-                PowerManager.PARTIAL_WAKE_LOCK, "AtmosphereLogger:Receiver.Measure");
+        else if(LoggerService.ACTION_MEASURE.equals(intent.getAction())) {
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                PowerManager pmgr = (PowerManager) context.getApplicationContext()
+                        .getSystemService(Context.POWER_SERVICE);
+                PowerManager.WakeLock wakelock = pmgr.newWakeLock(
+                        PowerManager.PARTIAL_WAKE_LOCK, "AtmosphereLogger:Receiver.Measure");
 
-            Intent logger_intent = new Intent(context, LoggerService.class)
-                .setAction(LoggerService.ACTION_MEASURE)
-                .putExtra(LoggerService.EXTRA_RESULT_RECEIVER,
-                          new WakeResultReceiver(wakelock));
+                Intent logger_intent = new Intent(context, LoggerService.class)
+                        .setAction(LoggerService.ACTION_MEASURE)
+                        .putExtra(LoggerService.EXTRA_RESULT_RECEIVER,
+                                new WakeResultReceiver(wakelock));
 
-            wakelock.acquire(LoggerService.TIMEOUT_MSEC);
-            context.startService(logger_intent);
+                wakelock.acquire(LoggerService.TIMEOUT_MSEC);
+                context.startService(logger_intent);
+            }
+            else {
+                // cancel previously scheduled alarm, it is no longer used
+                LoggerAlarmTools.stopLoggingAlarm(context);
+            }
         }
     }
 
