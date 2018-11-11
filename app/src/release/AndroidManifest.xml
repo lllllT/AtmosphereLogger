@@ -1,0 +1,13 @@
+<manifest package="org.tamanegi.atmosphere"
+          xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <provider
+            android:name=".LogContentProvider"
+            android:authorities="org.tamanegi.atmosphere.log"
+            android:enabled="true"
+            android:exported="true">
+        </provider>
+    </application>
+
+</manifest>

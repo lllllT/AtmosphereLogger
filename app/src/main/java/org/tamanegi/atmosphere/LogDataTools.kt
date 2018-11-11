@@ -33,9 +33,10 @@ fun convertAndExportData(context: Context) {
         getExportDataFile(context).writeText(getExportData(context))
 
         Handler(context.mainLooper).post {
+            val uri = Uri.parse("content://${BuildConfig.LOG_PROVIDER_AUTHORITY}/data")
             val intent = Intent(Intent.ACTION_SEND)
                     .setType("text/csv")
-                    .putExtra(Intent.EXTRA_STREAM, Uri.parse("content://org.tamanegi.atmosphere.log/data"))
+                    .putExtra(Intent.EXTRA_STREAM, uri)
 
             val chooserIntent = Intent.createChooser(intent, context.getString(R.string.export_title))
 

@@ -30,9 +30,11 @@ android {
         release {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
             signingConfig signingConfigs.release
+            buildConfigField("String", "LOG_PROVIDER_AUTHORITY", "\"org.tamanegi.atmosphere.log\"")
         }
         debug {
             applicationIdSuffix '.debug'
+            buildConfigField("String", "LOG_PROVIDER_AUTHORITY", "\"org.tamanegi.atmosphere.debug.log\"")
         }
     }
     productFlavors {

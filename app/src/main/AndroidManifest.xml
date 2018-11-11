@@ -46,14 +46,6 @@
             android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE">
         </service>
-
-        <provider
-            android:name=".LogContentProvider"
-            android:authorities="org.tamanegi.atmosphere.log"
-            android:enabled="true"
-            android:exported="true"
-            tools:ignore="ExportedContentProvider">
-        </provider>
     </application>
 
 </manifest>
